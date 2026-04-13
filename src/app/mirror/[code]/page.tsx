@@ -9,6 +9,7 @@ import MirrorRevealSequence from '@/components/MirrorRevealSequence'
 import { ensureProfile, linkSessionToProfile, saveDisplayName, getDisplayName } from '@/lib/identity'
 import type { SessionReport } from '@/lib/mirrorEngine'
 import { parseMirrorQuestionText } from '@/lib/mirrorUtils'
+import { BG_SURFACE, BORDER_CARD, COLOR_ACCENT, COLOR_TEXT, COLOR_MUTED } from '@/lib/theme'
 import { encode as encodeQR } from 'uqr'
 
 // ─── Types ──────────────────────────────────────────────────────
@@ -205,9 +206,33 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
 
   useEffect(() => { refreshRef.current = refresh }, [refresh])
 
-  // Auto-advance: when all group raters have submitted during group-rating phase,
-  // organizer auto-advances to mini-reveal. Uses advanceRef to avoid
-  // "used before declaration" errors (advanceRound defined later in component).
+  // Auto-advance SELF-RATING → GROUP-RATING:
+  // When the subject submits their self-rating, the organizer's client detects it
+  // via realtime and auto-advances. No button needed for this transition.
+  const selfAdvanceCheckedRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (!isOrganizer || !session?.id || !currentRound) return
+    if (currentRound.status !== 'self-rating') return
+    const roundKey = `${currentRound.id}-self`
+    if (selfAdvanceCheckedRef.current === roundKey) return
+
+    const checkSelfSubmitted = async () => {
+      const { data: ratings } = await supabase
+        .from('mirror_ratings')
+        .select('id')
+        .eq('session_id', session.id)
+        .eq('round_number', currentRound.round_number)
+        .is('rater_player_id', null) // self-rating has null rater
+      if (ratings && ratings.length > 0) {
+        selfAdvanceCheckedRef.current = roundKey
+        advanceRef.current?.()
+      }
+    }
+    checkSelfSubmitted()
+  }, [isOrganizer, session?.id, currentRound?.id, currentRound?.status, currentRound?.round_number])
+
+  // Auto-advance GROUP-RATING → MINI-REVEAL:
+  // When all group raters have submitted, organizer auto-advances.
   const autoAdvanceCheckedRef = useRef<string | null>(null)
   const advanceRef = useRef<(() => void) | null>(null)
 
@@ -326,11 +351,6 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
       }),
     })
 
-    // Auto-advance: if this was a self-rating and we're the organizer,
-    // auto-advance to group-rating (no need for organizer to click)
-    if (isSelfRating && isOrganizer && currentRound.status === 'self-rating') {
-      setTimeout(() => advanceRound(), 500)
-    }
   }
 
   const advanceRound = async () => {
@@ -592,13 +612,22 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
           )}
 
           {roundPhase === 'self-rating' && !isMyTurn && (
-            <div className="text-center py-12">
-              <div className="text-3xl mb-3">🪞</div>
-              <div className="text-base font-bold mb-1" style={{ color: '#1A1A1A' }}>
-                {subjectName} is rating themselves...
+            <div className="text-center py-8">
+              <div className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: COLOR_ACCENT }}>
+                {subjectName} is in the mirror
               </div>
-              <div className="text-sm" style={{ color: '#888' }}>
-                Your turn to rate them is next
+              <div className="rounded-2xl p-5 mb-4" style={{ background: BG_SURFACE, border: BORDER_CARD }}>
+                <div className="text-lg font-black leading-snug" style={{ color: COLOR_TEXT }}>
+                  {displayQuestion}
+                </div>
+              </div>
+              <div className="text-sm" style={{ color: COLOR_MUTED }}>
+                {subjectName} is rating themselves. You'll rate them next.
+              </div>
+              <div className="mt-4 flex items-center justify-center gap-1.5">
+                <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: COLOR_ACCENT }} />
+                <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: COLOR_ACCENT, animationDelay: '0.2s' }} />
+                <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: COLOR_ACCENT, animationDelay: '0.4s' }} />
               </div>
             </div>
           )}

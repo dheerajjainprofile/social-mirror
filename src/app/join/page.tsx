@@ -225,7 +225,7 @@ function JoinForm() {
               boxShadow: '0 4px 24px rgba(255,77,106,0.25)',
             }}
           >
-            {loading ? 'Joining...' : '🪞 Join Session'}
+            {loading ? 'Joining...' : 'Join Session'}
           </button>
         </form>
 

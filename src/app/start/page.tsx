@@ -243,9 +243,9 @@ function StartPageInner() {
             What happens next
           </div>
           <div className="space-y-2 text-sm" style={{ color: '#666' }}>
-            <div className="flex items-start gap-2"><span>🪞</span><span>Friends rate each other on personality traits (1-7)</span></div>
-            <div className="flex items-start gap-2"><span>📊</span><span>See the gap between self-perception and friend-perception</span></div>
-            <div className="flex items-start gap-2"><span>⚡</span><span>Get a personality portrait with hidden strengths and challenge cards</span></div>
+            <div className="flex items-start gap-2"><span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: '#FF4D6A' }} /><span>Friends rate each other on personality traits (1-7)</span></div>
+            <div className="flex items-start gap-2"><span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: '#FF8A5C' }} /><span>See the gap between self-perception and friend-perception</span></div>
+            <div className="flex items-start gap-2"><span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: '#FFD166' }} /><span>Get a personality portrait with hidden strengths and challenge cards</span></div>
           </div>
           <div className="mt-3 text-xs" style={{ color: '#BBB' }}>~20-25 minutes with 4-8 players</div>
         </div>
@@ -266,7 +266,7 @@ function StartPageInner() {
           }}
           className="w-full py-4 text-white font-black text-lg rounded-full cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
         >
-          {loading ? 'Creating Room...' : '🪞 Create Room'}
+          {loading ? 'Creating Room...' : 'Create Room'}
         </button>
       </div>
     </main>

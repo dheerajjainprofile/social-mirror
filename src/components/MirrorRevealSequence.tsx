@@ -95,7 +95,7 @@ export default function MirrorRevealSequence({
               boxShadow: '0 4px 24px rgba(255,77,106,0.3)',
             }}
           >
-            ✨ Begin the Reveal
+            Begin the Reveal
           </button>
         </div>
       </div>
