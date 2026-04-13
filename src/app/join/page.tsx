@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Suspense } from 'react'
+import SocialMirrorLogo from '@/components/SocialMirrorLogo'
 
 function JoinForm() {
   const router = useRouter()

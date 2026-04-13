@@ -432,8 +432,8 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
           <div className="rounded-2xl p-4 mb-4" style={{ background: '#FFFFFF', border: '1px solid #EEEBE6' }}>
             <div className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: '#999' }}>
               Players ({nonOrgPlayers.length})
-              {nonOrgPlayers.length < 3 && (
-                <span className="ml-2 normal-case" style={{ color: '#FF4D6A' }}>Need {3 - nonOrgPlayers.length} more</span>
+              {nonOrgPlayers.length < 2 && (
+                <span className="ml-2 normal-case" style={{ color: '#FF4D6A' }}>Need {2 - nonOrgPlayers.length} more</span>
               )}
             </div>
             <div className="space-y-2">
@@ -458,7 +458,7 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
           {isOrganizer && (
             <button
               onClick={startMirrorSession}
-              disabled={nonOrgPlayers.length < 3 || starting}
+              disabled={nonOrgPlayers.length < 2 || starting}
               className="w-full py-4 rounded-full font-black text-white text-base transition-all disabled:opacity-40 hover:scale-[1.02] active:scale-[0.98]"
               style={{
                 background: 'linear-gradient(135deg, #FF4D6A, #FF8A5C)',

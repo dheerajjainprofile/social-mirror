@@ -53,8 +53,8 @@ export async function POST(req: NextRequest) {
       .from('players').select('*').eq('session_id', session_id).eq('removed', false)
     const subjects = (allPlayers ?? []).filter((p) => !p.is_organizer)
 
-    if (subjects.length < 3) {
-      return NextResponse.json({ error: 'Need at least 4 players (3 non-organizer) to start' }, { status: 400 })
+    if (subjects.length < 2) {
+      return NextResponse.json({ error: 'Need at least 2 players (plus organizer) to start' }, { status: 400 })
     }
 
     // Shuffle subjects for random ordering
