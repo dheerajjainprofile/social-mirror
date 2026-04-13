@@ -90,6 +90,9 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
     fetchGap()
   }, [session?.id, currentRound?.id, currentRound?.status])
 
+  // Session ID ref — always-current, no stale closure issues
+  const sessionIdRef = useRef<string | null>(null)
+
   // Realtime reconnect + tick counter (forces auto-advance effects to re-check)
   const [lastVisible, setLastVisible] = useState(0)
   const [realtimeTick, setRealtimeTick] = useState(0)
@@ -103,6 +106,7 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
         .from('sessions').select('*').eq('room_code', code).single()
       if (!sess) { setError('Room not found'); setLoading(false); return }
       setSession(sess)
+      sessionIdRef.current = sess.id
 
       const { data: plist } = await supabase
         .from('players').select('*').eq('session_id', sess.id).eq('removed', false)
@@ -185,17 +189,17 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
   // ─── Realtime ─────────────────────────────────────────────────
 
   const refresh = useCallback(async () => {
-    if (!session?.id) return
-    const { data: sess } = await supabase.from('sessions').select('*').eq('id', session.id).single()
+    const sid = sessionIdRef.current
+    if (!sid) return
+
+    const [{ data: sess }, { data: plist }, { data: rounds }] = await Promise.all([
+      supabase.from('sessions').select('*').eq('id', sid).single(),
+      supabase.from('players').select('*').eq('session_id', sid).eq('removed', false),
+      supabase.from('rounds').select('*').eq('session_id', sid).order('round_number', { ascending: true }),
+    ])
+
     if (sess) setSession(sess)
-
-    const { data: plist } = await supabase
-      .from('players').select('*').eq('session_id', session.id).eq('removed', false)
     if (plist) setPlayers(plist)
-
-    const { data: rounds } = await supabase
-      .from('rounds').select('*').eq('session_id', session.id)
-      .order('round_number', { ascending: true })
     if (rounds && rounds.length > 0) {
       setAllRounds(rounds)
       const active = rounds.find((r) =>
@@ -203,20 +207,29 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
       ) || rounds[rounds.length - 1]
       setCurrentRound(active)
     }
-    // Increment tick so auto-advance effects re-check
     setRealtimeTick((t) => t + 1)
-  }, [session?.id])
+  }, [])
 
   useEffect(() => { refreshRef.current = refresh }, [refresh])
 
-  // Poll players every 3s while in lobby (Supabase Realtime INSERT is unreliable)
+  // UNIVERSAL POLL: refresh everything every 1.5s. Realtime is unreliable.
+  // This is the primary sync mechanism for ALL game phases.
+  useEffect(() => {
+    if (!session?.id) return
+    const poll = setInterval(() => {
+      refreshRef.current?.()
+    }, 1500)
+    return () => clearInterval(poll)
+  }, [session?.id])
+
+  // LEGACY: keep lobby-specific player poll at 1s for faster join detection
   useEffect(() => {
     if (!session?.id || session.status !== 'lobby') return
     const poll = setInterval(async () => {
       const { data } = await supabase
         .from('players').select('*').eq('session_id', session.id).eq('removed', false)
       if (data) setPlayers(data)
-    }, 3000)
+    }, 1000)
     return () => clearInterval(poll)
   }, [session?.id, session?.status])
 
