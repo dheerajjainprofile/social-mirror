@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import type { SessionReport } from '@/lib/mirrorEngine'
+import { soundPortraitReveal, soundSurprise, soundHotTake, soundCrowd } from '@/lib/sounds'
 import PortraitCard from './PortraitCard'
 import BiggestSurpriseCard from './BiggestSurpriseCard'
 import HotTakeCard from './HotTakeCard'
@@ -43,11 +44,16 @@ export default function MirrorRevealSequence({
   const showHotTake = currentStep > report.portraits.length + 3 || !organizerPaced
   const isComplete = currentStep >= totalSteps
 
-  const advance = () => {
+  const advance = useCallback(() => {
     const next = currentStep + 1
     setCurrentStep(next)
+    // Play sound based on what was just revealed
+    if (next <= report.portraits.length) soundPortraitReveal()
+    else if (next === report.portraits.length + 1) soundSurprise()
+    else if (next === report.portraits.length + 2) soundCrowd()
+    else if (next === report.portraits.length + 4) soundHotTake()
     if (next >= totalSteps && onComplete) onComplete()
-  }
+  }, [currentStep, report.portraits.length, totalSteps, onComplete])
 
   const stepLabel = () => {
     if (currentStep < report.portraits.length) {

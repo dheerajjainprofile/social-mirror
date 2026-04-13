@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { soundRatingSubmit } from '@/lib/sounds'
 
 interface MirrorRatingSliderProps {
   question: string
@@ -36,6 +37,7 @@ export default function MirrorRatingSlider({
   const handleSubmit = useCallback(() => {
     if (selected === null || submitted || disabled) return
     setSubmitted(true)
+    soundRatingSubmit()
     onSubmit(selected)
   }, [selected, submitted, disabled, onSubmit])
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { soundGapReveal } from '@/lib/sounds'
 
 interface MiniRevealProps {
   subjectName: string
@@ -35,7 +36,7 @@ export default function MiniReveal({
   // Staggered reveal: self → group → gap
   useEffect(() => {
     const t1 = setTimeout(() => setPhase('group'), 800)
-    const t2 = setTimeout(() => setPhase('gap'), 1600)
+    const t2 = setTimeout(() => { setPhase('gap'); soundGapReveal() }, 1600)
     return () => { clearTimeout(t1); clearTimeout(t2) }
   }, [])
 
