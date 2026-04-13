@@ -660,24 +660,24 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
           {/* Players */}
           <div className="rounded-2xl p-4 mb-4" style={{ background: '#FFFFFF', border: '1px solid #EEEBE6' }}>
             <div className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: '#999' }}>
-              Players ({nonOrgPlayers.length})
-              {nonOrgPlayers.length < 2 && (
-                <span className="ml-2 normal-case" style={{ color: '#FF4D6A' }}>Need {2 - nonOrgPlayers.length} more</span>
+              Players ({players.length})
+              {players.length < 2 && (
+                <span className="ml-2 normal-case" style={{ color: '#FF4D6A' }}>Need {2 - players.length} more</span>
               )}
             </div>
             <div className="space-y-2">
-              {nonOrgPlayers.map((p) => (
+              {players.map((p) => (
                 <div key={p.id} className="flex items-center gap-2 py-1.5">
                   <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white"
-                    style={{ background: 'linear-gradient(135deg, #FF4D6A, #FF8A5C)' }}>
+                    style={{ background: p.is_organizer ? '#1A1A1A' : 'linear-gradient(135deg, #FF4D6A, #FF8A5C)' }}>
                     {p.name[0].toUpperCase()}
                   </div>
                   <span className="text-sm font-semibold" style={{ color: '#1A1A1A' }}>
-                    {p.name} {p.id === me.id ? '(you)' : ''}
+                    {p.name} {p.id === me.id ? '(you)' : ''} {p.is_organizer ? '· host' : ''}
                   </span>
                 </div>
               ))}
-              {nonOrgPlayers.length === 0 && (
+              {players.length <= 1 && (
                 <div className="text-sm py-2" style={{ color: '#CCC' }}>Waiting for players...</div>
               )}
             </div>
@@ -836,7 +836,9 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
                   ? (groupRatingCount >= expectedRaters
                     ? 'Reveal the Gap'
                     : `${groupRatingCount}/${expectedRaters} rated — Reveal anyway`)
-                  : 'Next Round →'}
+                  : currentRoundNum >= totalRounds
+                    ? 'See Your Mirror Portraits'
+                    : 'Next Round →'}
               </button>
             </div>
           )}

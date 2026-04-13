@@ -197,16 +197,19 @@ export default function MirrorRevealSequence({
 function ViewProfileLink() {
   const [profileId, setProfileId] = useState<string | null>(null)
   useEffect(() => {
-    getMyProfileId().then(setProfileId)
+    getMyProfileId().then((id) => {
+      if (id) setProfileId(id)
+    }).catch(() => {})
   }, [])
-  if (!profileId) return null
+
+  // Always show the link — if no profile found, link to home
   return (
     <a
-      href={`/profile/${profileId}`}
-      className="text-xs font-semibold underline underline-offset-2"
+      href={profileId ? `/profile/${profileId}` : '/'}
+      className="text-sm font-bold underline underline-offset-2 mt-2 inline-block"
       style={{ color: '#FF4D6A' }}
     >
-      View your Mirror Profile →
+      {profileId ? 'View your Mirror Profile →' : 'Play again →'}
     </a>
   )
 }
