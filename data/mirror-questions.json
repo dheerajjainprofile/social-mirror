@@ -1,0 +1,181 @@
+[
+  {
+    "id": "o1",
+    "text": "How adventurous is {player} when it comes to trying new things?",
+    "dimension": "openness",
+    "anchor_low": "Sticks to what they know",
+    "anchor_high": "First to try anything"
+  },
+  {
+    "id": "o2",
+    "text": "How creative is {player}?",
+    "dimension": "openness",
+    "anchor_low": "Practical, by-the-book",
+    "anchor_high": "Full of wild ideas"
+  },
+  {
+    "id": "o3",
+    "text": "How open is {player} to changing their mind?",
+    "dimension": "openness",
+    "anchor_low": "Once decided, that's it",
+    "anchor_high": "Always reconsidering"
+  },
+  {
+    "id": "o4",
+    "text": "How curious is {player} about things outside their usual world?",
+    "dimension": "openness",
+    "anchor_low": "Happy in their lane",
+    "anchor_high": "Into everything"
+  },
+  {
+    "id": "o5",
+    "text": "How likely is {player} to pick the weird option on a menu?",
+    "dimension": "openness",
+    "anchor_low": "Butter chicken every time",
+    "anchor_high": "Whatever sounds strangest"
+  },
+
+  {
+    "id": "c1",
+    "text": "How organized is {player}'s life?",
+    "dimension": "conscientiousness",
+    "anchor_low": "Beautiful chaos",
+    "anchor_high": "Everything has a system"
+  },
+  {
+    "id": "c2",
+    "text": "How reliable is {player} when they say they'll do something?",
+    "dimension": "conscientiousness",
+    "anchor_low": "Intentions are good, follow-through... less so",
+    "anchor_high": "If they said it, it's happening"
+  },
+  {
+    "id": "c3",
+    "text": "How much does {player} plan ahead vs. wing it?",
+    "dimension": "conscientiousness",
+    "anchor_low": "Plans are suggestions",
+    "anchor_high": "Has a spreadsheet for everything"
+  },
+  {
+    "id": "c4",
+    "text": "How punctual is {player}?",
+    "dimension": "conscientiousness",
+    "anchor_low": "IST (Indian Stretchable Time)",
+    "anchor_high": "Arrives before the host"
+  },
+  {
+    "id": "c5",
+    "text": "How disciplined is {player} about finishing what they start?",
+    "dimension": "conscientiousness",
+    "anchor_low": "27 half-finished projects",
+    "anchor_high": "Sees everything through"
+  },
+
+  {
+    "id": "e1",
+    "text": "How much does {player} light up a room when they walk in?",
+    "dimension": "extraversion",
+    "anchor_low": "Ninja entrance",
+    "anchor_high": "Everyone notices"
+  },
+  {
+    "id": "e2",
+    "text": "How energized does {player} get from being around people?",
+    "dimension": "extraversion",
+    "anchor_low": "Needs alone time to recharge",
+    "anchor_high": "People ARE the recharge"
+  },
+  {
+    "id": "e3",
+    "text": "How likely is {player} to start a conversation with a stranger?",
+    "dimension": "extraversion",
+    "anchor_low": "Would rather not",
+    "anchor_high": "Already best friends with the waiter"
+  },
+  {
+    "id": "e4",
+    "text": "How loud is {player} in a group?",
+    "dimension": "extraversion",
+    "anchor_low": "You have to lean in to hear them",
+    "anchor_high": "You can hear them from the next room"
+  },
+  {
+    "id": "e5",
+    "text": "How comfortable is {player} being the center of attention?",
+    "dimension": "extraversion",
+    "anchor_low": "Actively avoids it",
+    "anchor_high": "Born for the spotlight"
+  },
+
+  {
+    "id": "a1",
+    "text": "How likely is {player} to go along with what the group wants?",
+    "dimension": "agreeableness",
+    "anchor_low": "My way or the highway",
+    "anchor_high": "Whatever makes everyone happy"
+  },
+  {
+    "id": "a2",
+    "text": "How empathetic is {player}?",
+    "dimension": "agreeableness",
+    "anchor_low": "Tough love approach",
+    "anchor_high": "Feels what you feel"
+  },
+  {
+    "id": "a3",
+    "text": "How likely is {player} to avoid conflict?",
+    "dimension": "agreeableness",
+    "anchor_low": "Will say the uncomfortable thing",
+    "anchor_high": "Peacekeeper at all costs"
+  },
+  {
+    "id": "a4",
+    "text": "How generous is {player} with their time for others?",
+    "dimension": "agreeableness",
+    "anchor_low": "Protects their time fiercely",
+    "anchor_high": "Drops everything to help"
+  },
+  {
+    "id": "a5",
+    "text": "How trusting is {player} of new people?",
+    "dimension": "agreeableness",
+    "anchor_low": "Trust is earned slowly",
+    "anchor_high": "Trusts until proven wrong"
+  },
+
+  {
+    "id": "s1",
+    "text": "How chill is {player} under pressure?",
+    "dimension": "stability",
+    "anchor_low": "Stress spiral incoming",
+    "anchor_high": "Ice in their veins"
+  },
+  {
+    "id": "s2",
+    "text": "How much does {player} overthink things?",
+    "dimension": "stability",
+    "anchor_low": "Decides and moves on",
+    "anchor_high": "Still thinking about that thing from 2019"
+  },
+  {
+    "id": "s3",
+    "text": "How quickly does {player} bounce back from a bad day?",
+    "dimension": "stability",
+    "anchor_low": "Carries it for a while",
+    "anchor_high": "Already over it by dinner"
+  },
+  {
+    "id": "s4",
+    "text": "How easily does {player} get frustrated?",
+    "dimension": "stability",
+    "anchor_low": "Fuse is... short",
+    "anchor_high": "Nothing bothers them"
+  },
+  {
+    "id": "s5",
+    "text": "How much does {player} worry about what others think of them?",
+    "dimension": "stability",
+    "anchor_low": "Could not care less",
+    "anchor_high": "Replays every conversation"
+  }
+]
