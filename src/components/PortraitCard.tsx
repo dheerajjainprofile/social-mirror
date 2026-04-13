@@ -1,21 +1,17 @@
 'use client'
 
-import { useState } from 'react'
 import type { PlayerPortrait } from '@/lib/mirrorEngine'
 
 interface PortraitCardProps {
   portrait: PlayerPortrait
-  /** Stagger delay for entrance animation (ms) */
   animDelay?: number
 }
 
 /**
- * PortraitCard — The full personality reveal for one player.
- * Shows: role, trait bars (self vs group), Johari quadrants,
- * hidden strengths, masks, challenge card, and reflection prompt.
+ * PortraitCard — Full personality reveal for one player.
+ * Everything visible by default. No collapsed sections.
  */
 export default function PortraitCard({ portrait, animDelay = 0 }: PortraitCardProps) {
-  const [expanded, setExpanded] = useState(false)
   const {
     playerName, role, traits, jopiMap, hiddenStrengths, masks,
     challengeCard, reflectionPrompt, headline, selfAwarenessScore,
@@ -52,7 +48,7 @@ export default function PortraitCard({ portrait, animDelay = 0 }: PortraitCardPr
         </div>
 
         {/* Role description */}
-        <p className="text-xs mb-5" style={{ color: '#888' }}>{role.description}</p>
+        <p className="text-xs mb-4" style={{ color: '#888' }}>{role.description}</p>
 
         {/* Headline */}
         <p className="text-sm font-semibold mb-5 leading-relaxed" style={{ color: '#444' }}>
@@ -67,7 +63,8 @@ export default function PortraitCard({ portrait, animDelay = 0 }: PortraitCardPr
             const absGap = Math.abs(t.gap)
             const gapColor = absGap < 0.8 ? '#999' : t.gap > 0 ? '#00B894' : '#FF4D6A'
             const quadrant = jopiMap.find((j) => j.dimension === t.dimension)?.quadrant ?? 'arena'
-            const quadrantLabel = quadrant === 'arena' ? 'Arena' : quadrant === 'blind_spot' ? 'Blind Spot' : 'Mask'
+            // Plain English labels instead of Johari jargon
+            const quadrantLabel = quadrant === 'arena' ? 'In Sync' : quadrant === 'blind_spot' ? 'Hidden Strength' : 'Your Mask'
 
             return (
               <div key={t.dimension}>
@@ -85,7 +82,6 @@ export default function PortraitCard({ portrait, animDelay = 0 }: PortraitCardPr
                     </span>
                   </div>
                 </div>
-                {/* Stacked bars */}
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] w-12 text-right font-medium" style={{ color: '#BBB' }}>You</span>
@@ -116,11 +112,14 @@ export default function PortraitCard({ portrait, animDelay = 0 }: PortraitCardPr
           })}
         </div>
 
-        {/* Hidden Strengths */}
+        {/* Hidden Strengths — plain English */}
         {hiddenStrengths.length > 0 && (
           <div className="mb-4 p-4 rounded-2xl" style={{ background: '#F0FDF9', border: '1px solid #D1FAE5' }}>
-            <div className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#00B894' }}>
+            <div className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: '#00B894' }}>
               Hidden Strengths
+            </div>
+            <div className="text-[10px] mb-2" style={{ color: '#66CDAA' }}>
+              Your friends rated these higher than you rated yourself. They see something you're missing.
             </div>
             {hiddenStrengths.map((hs, i) => (
               <p key={i} className="text-sm leading-relaxed mb-2 last:mb-0" style={{ color: '#444' }}>
@@ -130,11 +129,14 @@ export default function PortraitCard({ portrait, animDelay = 0 }: PortraitCardPr
           </div>
         )}
 
-        {/* Masks */}
+        {/* Masks — plain English */}
         {masks.length > 0 && (
           <div className="mb-4 p-4 rounded-2xl" style={{ background: '#FFF5F5', border: '1px solid #FED7D7' }}>
-            <div className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#FF4D6A' }}>
-              The Mask
+            <div className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: '#FF4D6A' }}>
+              Your Mask
+            </div>
+            <div className="text-[10px] mb-2" style={{ color: '#FF9999' }}>
+              You rated these higher than your friends did. The version you project vs. what they see.
             </div>
             {masks.map((m, i) => (
               <p key={i} className="text-sm leading-relaxed mb-2 last:mb-0" style={{ color: '#444' }}>
@@ -144,39 +146,26 @@ export default function PortraitCard({ portrait, animDelay = 0 }: PortraitCardPr
           </div>
         )}
 
-        {/* Expand toggle */}
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className="w-full text-center text-xs font-bold py-2 mb-2 rounded-lg transition-colors"
-          style={{ color: '#FF4D6A', background: expanded ? 'rgba(255,77,106,0.05)' : 'transparent' }}
-        >
-          {expanded ? 'Show less' : 'Your challenge + reflection →'}
-        </button>
+        {/* Challenge Card — ALWAYS visible */}
+        <div className="mb-4 p-4 rounded-2xl" style={{ background: '#1A1A1A' }}>
+          <div className="text-xs font-bold uppercase tracking-wider mb-2"
+            style={{ color: '#FFD166' }}>
+            🎯 Your Challenge This Week
+          </div>
+          <p className="text-sm leading-relaxed" style={{ color: '#E5E5E5' }}>
+            {challengeCard.challenge}
+          </p>
+        </div>
 
-        {expanded && (
-          <>
-            {/* Challenge Card */}
-            <div className="mb-4 p-4 rounded-2xl" style={{ background: '#1A1A1A' }}>
-              <div className="text-xs font-bold uppercase tracking-wider mb-2"
-                style={{ color: '#FFD166' }}>
-                Your Challenge This Week
-              </div>
-              <p className="text-sm leading-relaxed" style={{ color: '#E5E5E5' }}>
-                {challengeCard.challenge}
-              </p>
-            </div>
-
-            {/* Reflection Prompt */}
-            <div className="p-4 rounded-2xl" style={{ background: '#F8F7F4', border: '1px solid #EEEBE6' }}>
-              <div className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#888' }}>
-                One Question to Sit With
-              </div>
-              <p className="text-sm leading-relaxed italic" style={{ color: '#555' }}>
-                "{reflectionPrompt.question}"
-              </p>
-            </div>
-          </>
-        )}
+        {/* Reflection Prompt — ALWAYS visible */}
+        <div className="p-4 rounded-2xl" style={{ background: '#F8F7F4', border: '1px solid #EEEBE6' }}>
+          <div className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#888' }}>
+            💭 One Question to Sit With
+          </div>
+          <p className="text-sm leading-relaxed italic" style={{ color: '#555' }}>
+            "{reflectionPrompt.question}"
+          </p>
+        </div>
       </div>
     </div>
   )

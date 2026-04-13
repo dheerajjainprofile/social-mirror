@@ -1,86 +1,126 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import type { SessionReport } from '@/lib/mirrorEngine'
-import { soundPortraitReveal, soundSurprise, soundHotTake, soundCrowd } from '@/lib/sounds'
 import PortraitCard from './PortraitCard'
 import BiggestSurpriseCard from './BiggestSurpriseCard'
 import HotTakeCard from './HotTakeCard'
 import CompatibilityCard from './CompatibilityCard'
 import GroupRolesCard from './GroupRolesCard'
+import { soundPortraitReveal, soundSurprise, soundHotTake, soundCrowd } from '@/lib/sounds'
 
 interface MirrorRevealSequenceProps {
   report: SessionReport
-  /** If true, organizer controls pacing. If false, all revealed at once. */
-  organizerPaced?: boolean
   onComplete?: () => void
 }
 
 /**
- * MirrorRevealSequence — Orchestrates the full post-game reveal.
+ * MirrorRevealSequence — Auto-paced reveal experience.
  *
- * Order:
- * 1. Each player's portrait (one at a time if organizer-paced)
- * 2. Biggest Surprise card
- * 3. Group Roles
- * 4. Compatibility Map
- * 5. Hot Take (finale)
+ * Single "Begin the Reveal" button, then cards auto-play with dramatic timing.
+ * Tap anywhere to skip to the next card. Swipe-like feel.
+ *
+ * Order: portraits (one by one) → biggest surprise → roles → compatibility → hot take
  */
 export default function MirrorRevealSequence({
   report,
-  organizerPaced = true,
   onComplete,
 }: MirrorRevealSequenceProps) {
-  const totalSteps = report.portraits.length + 4 // portraits + surprise + roles + compat + hottake
-  const [currentStep, setCurrentStep] = useState(organizerPaced ? 0 : totalSteps)
+  const totalSteps = report.portraits.length + 4
+  const [started, setStarted] = useState(false)
+  const [currentStep, setCurrentStep] = useState(0)
+  const [autoPlaying, setAutoPlaying] = useState(false)
 
-  const visiblePortraits = organizerPaced
-    ? report.portraits.slice(0, currentStep)
-    : report.portraits
-
-  const showSurprise = currentStep > report.portraits.length || !organizerPaced
-  const showRoles = currentStep > report.portraits.length + 1 || !organizerPaced
-  const showCompat = currentStep > report.portraits.length + 2 || !organizerPaced
-  const showHotTake = currentStep > report.portraits.length + 3 || !organizerPaced
+  const visiblePortraits = report.portraits.slice(0, Math.min(currentStep, report.portraits.length))
+  const showSurprise = currentStep > report.portraits.length
+  const showRoles = currentStep > report.portraits.length + 1
+  const showCompat = currentStep > report.portraits.length + 2
+  const showHotTake = currentStep > report.portraits.length + 3
   const isComplete = currentStep >= totalSteps
 
   const advance = useCallback(() => {
-    const next = currentStep + 1
-    setCurrentStep(next)
-    // Play sound based on what was just revealed
-    if (next <= report.portraits.length) soundPortraitReveal()
-    else if (next === report.portraits.length + 1) soundSurprise()
-    else if (next === report.portraits.length + 2) soundCrowd()
-    else if (next === report.portraits.length + 4) soundHotTake()
-    if (next >= totalSteps && onComplete) onComplete()
-  }, [currentStep, report.portraits.length, totalSteps, onComplete])
+    setCurrentStep((prev) => {
+      const next = prev + 1
+      // Play sound based on what was just revealed
+      if (next <= report.portraits.length) soundPortraitReveal()
+      else if (next === report.portraits.length + 1) soundSurprise()
+      else if (next === report.portraits.length + 2) soundCrowd()
+      else if (next === report.portraits.length + 4) soundHotTake()
+      if (next >= totalSteps && onComplete) onComplete()
+      return Math.min(next, totalSteps)
+    })
+  }, [report.portraits.length, totalSteps, onComplete])
 
-  const stepLabel = () => {
-    if (currentStep < report.portraits.length) {
-      return `Reveal ${report.portraits[currentStep]?.playerName}'s Portrait`
-    }
-    if (currentStep === report.portraits.length) return 'Reveal Biggest Surprise'
-    if (currentStep === report.portraits.length + 1) return "Reveal Tonight's Cast"
-    if (currentStep === report.portraits.length + 2) return 'Reveal Compatibility Map'
-    if (currentStep === report.portraits.length + 3) return 'Reveal Hot Take'
-    return 'Done'
+  // Auto-play timer: advance every 4 seconds for portraits, 5s for group cards
+  useEffect(() => {
+    if (!autoPlaying || isComplete) return
+    const delay = currentStep < report.portraits.length ? 4000 : 5000
+    const timer = setTimeout(advance, delay)
+    return () => clearTimeout(timer)
+  }, [autoPlaying, currentStep, isComplete, advance, report.portraits.length])
+
+  const beginReveal = () => {
+    setStarted(true)
+    setAutoPlaying(true)
+    advance() // Show first portrait immediately
+  }
+
+  // Tap to skip ahead
+  const handleTap = () => {
+    if (!started) return
+    if (isComplete) return
+    advance()
+  }
+
+  // ── Not started yet ──────────────────────────────────────
+  if (!started) {
+    return (
+      <div className="min-h-dvh flex items-center justify-center p-4"
+        style={{ background: 'linear-gradient(160deg, #FAF8F5 0%, #FFF5F0 40%, #F5F0FA 100%)' }}>
+        <div className="text-center max-w-sm">
+          <div className="text-6xl mb-4">🪞</div>
+          <h1 className="text-2xl font-black mb-2" style={{ color: '#1A1A1A' }}>
+            Your Mirror is Ready
+          </h1>
+          <p className="text-sm mb-6" style={{ color: '#888' }}>
+            {report.portraits.length} personality portraits. Hidden strengths. Challenge cards.
+            Tap to skip ahead at any time.
+          </p>
+          <button
+            onClick={beginReveal}
+            className="w-full py-4 rounded-full font-black text-white text-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
+            style={{
+              background: 'linear-gradient(135deg, #FF4D6A, #FF8A5C)',
+              boxShadow: '0 4px 24px rgba(255,77,106,0.3)',
+            }}
+          >
+            ✨ Begin the Reveal
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="w-full" style={{ background: '#FAF8F5', minHeight: '100dvh' }}>
+    <div
+      className="w-full min-h-dvh"
+      style={{ background: '#FAF8F5' }}
+      onClick={handleTap}
+    >
       <div className="max-w-md mx-auto px-4 py-6 space-y-6">
 
-        {/* Header */}
-        <div className="text-center mb-4">
-          <div className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: '#FF4D6A' }}>
-            Mirror Reveal
+        {/* Progress bar */}
+        <div className="sticky top-0 z-20 pt-2 pb-3" style={{ background: '#FAF8F5' }}>
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#FF4D6A' }}>
+              Mirror Reveal
+            </span>
+            <span className="text-xs" style={{ color: '#BBB' }}>
+              {currentStep}/{totalSteps} · tap to skip
+            </span>
           </div>
-          <div className="text-sm" style={{ color: '#888' }}>
-            {currentStep} of {totalSteps} revealed
-          </div>
-          {/* Progress bar */}
-          <div className="w-full h-1.5 rounded-full mt-2" style={{ background: '#EEEBE6' }}>
-            <div className="h-full rounded-full transition-all duration-500"
+          <div className="w-full h-1 rounded-full" style={{ background: '#EEEBE6' }}>
+            <div className="h-full rounded-full transition-all duration-700 ease-out"
               style={{
                 width: `${(currentStep / totalSteps) * 100}%`,
                 background: 'linear-gradient(90deg, #FF4D6A, #FF8A5C, #FFD166)',
@@ -90,58 +130,70 @@ export default function MirrorRevealSequence({
 
         {/* Portraits */}
         {visiblePortraits.map((p, i) => (
-          <PortraitCard key={p.playerId} portrait={p} animDelay={i * 100} />
+          <div key={p.playerId} className="animate-fadeInUp" style={{ animationDelay: `${i * 100}ms` }}>
+            <PortraitCard portrait={p} />
+          </div>
         ))}
 
         {/* Biggest Surprise */}
         {showSurprise && (
-          <BiggestSurpriseCard surprise={report.biggestSurprise} />
+          <div className="animate-fadeInUp">
+            <BiggestSurpriseCard surprise={report.biggestSurprise} />
+          </div>
         )}
 
         {/* Group Roles */}
         {showRoles && (
-          <GroupRolesCard roles={report.groupRoles} />
+          <div className="animate-fadeInUp">
+            <GroupRolesCard roles={report.groupRoles} />
+          </div>
         )}
 
         {/* Compatibility */}
         {showCompat && (
-          <CompatibilityCard pairs={report.compatibility} />
+          <div className="animate-fadeInUp">
+            <CompatibilityCard pairs={report.compatibility} />
+          </div>
         )}
 
         {/* Hot Take */}
         {showHotTake && (
-          <HotTakeCard hotTake={report.hotTake} />
-        )}
-
-        {/* Advance button (organizer only) */}
-        {organizerPaced && !isComplete && (
-          <div className="sticky bottom-4 pt-2">
-            <button
-              onClick={advance}
-              className="w-full py-4 rounded-full font-black text-white text-base transition-all hover:scale-[1.02] active:scale-[0.98]"
-              style={{
-                background: 'linear-gradient(135deg, #FF4D6A, #FF8A5C)',
-                boxShadow: '0 4px 24px rgba(255,77,106,0.3)',
-              }}
-            >
-              {stepLabel()}
-            </button>
+          <div className="animate-fadeInUp">
+            <HotTakeCard hotTake={report.hotTake} />
           </div>
         )}
 
         {/* Session complete */}
         {isComplete && (
-          <div className="text-center py-4">
-            <div className="text-2xl mb-2">🪞</div>
-            <div className="text-sm font-bold" style={{ color: '#1A1A1A' }}>
+          <div className="text-center py-6 animate-fadeInUp">
+            <div className="text-3xl mb-3">🪞</div>
+            <div className="text-lg font-black mb-1" style={{ color: '#1A1A1A' }}>
               That's your mirror tonight.
             </div>
-            <div className="text-xs mt-1" style={{ color: '#888' }}>
+            <div className="text-sm mb-4" style={{ color: '#888' }}>
               Play again with different friends. See what changes.
             </div>
+            <a
+              href="/"
+              className="inline-block px-8 py-3 rounded-full font-bold text-white text-sm"
+              style={{ background: 'linear-gradient(135deg, #FF4D6A, #FF8A5C)' }}
+            >
+              Play Again
+            </a>
           </div>
         )}
       </div>
+
+      {/* CSS for fadeInUp animation */}
+      <style>{`
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeInUp {
+          animation: fadeInUp 0.6s ease-out both;
+        }
+      `}</style>
     </div>
   )
 }

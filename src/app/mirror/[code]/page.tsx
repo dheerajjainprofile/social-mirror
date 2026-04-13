@@ -65,6 +65,29 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
     selfScore: number; groupAvg: number; gap: number
   } | null>(null)
 
+  // Auto-compute mini-reveal data when round enters mini-reveal phase
+  // This runs on ALL clients (not just organizer) via realtime
+  useEffect(() => {
+    if (!session?.id || !currentRound || currentRound.status !== 'mini-reveal') return
+    const fetchGap = async () => {
+      const { data: ratings } = await supabase
+        .from('mirror_ratings')
+        .select('rater_player_id, score')
+        .eq('session_id', session.id)
+        .eq('round_number', currentRound.round_number)
+      if (!ratings || ratings.length === 0) return
+      const selfRating = ratings.find((r) => r.rater_player_id === null)
+      const groupRatings = ratings.filter((r) => r.rater_player_id !== null)
+      const selfScore = selfRating?.score ?? 4
+      const groupAvg = groupRatings.length > 0
+        ? Math.round((groupRatings.reduce((s, r) => s + r.score, 0) / groupRatings.length) * 10) / 10
+        : selfScore
+      const gap = Math.round((groupAvg - selfScore) * 10) / 10
+      setMiniRevealData({ selfScore, groupAvg, gap })
+    }
+    fetchGap()
+  }, [session?.id, currentRound?.id, currentRound?.status])
+
   // Realtime reconnect
   const [lastVisible, setLastVisible] = useState(0)
   const refreshRef = useRef<(() => void) | null>(null)
@@ -259,6 +282,12 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
         score,
       }),
     })
+
+    // Auto-advance: if this was a self-rating and we're the organizer,
+    // auto-advance to group-rating (no need for organizer to click)
+    if (isSelfRating && isOrganizer && currentRound.status === 'self-rating') {
+      setTimeout(() => advanceRound(), 500)
+    }
   }
 
   const advanceRound = async () => {
@@ -339,7 +368,7 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
 
   // ── Reveal phase ────────────────────────────────────────────
   if (report && (session?.status === 'revealing' || session?.status === 'ended')) {
-    return <MirrorRevealSequence report={report} organizerPaced={isOrganizer} />
+    return <MirrorRevealSequence report={report} />
   }
 
   // ── Synthesizing ────────────────────────────────────────────
@@ -581,19 +610,20 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
             </div>
           )}
 
-          {/* Organizer advance button */}
-          {isOrganizer && (roundPhase === 'self-rating' || roundPhase === 'group-rating' || roundPhase === 'mini-reveal') && (
+          {/* Organizer advance button — only for group-rating→reveal and mini-reveal→next
+              Self-rating auto-advances after subject submits */}
+          {isOrganizer && (roundPhase === 'group-rating' || roundPhase === 'mini-reveal') && (
             <div className="fixed bottom-4 left-4 right-4 max-w-md mx-auto">
               <button
                 onClick={advanceRound}
                 disabled={advancing}
-                className="w-full py-3.5 rounded-full font-bold text-white text-sm transition-all"
+                className="w-full py-3.5 rounded-full font-bold text-white text-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
                 style={{
-                  background: '#1A1A1A',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+                  background: 'linear-gradient(135deg, #FF4D6A, #FF8A5C)',
+                  boxShadow: '0 4px 20px rgba(255,77,106,0.25)',
                 }}
               >
-                {advancing ? 'Advancing...' : roundPhase === 'self-rating' ? 'Start Group Rating →' : roundPhase === 'group-rating' ? 'Reveal Gap →' : 'Next Round →'}
+                {advancing ? '...' : roundPhase === 'group-rating' ? '✨ Reveal the Gap' : '→ Next Round'}
               </button>
             </div>
           )}

@@ -618,8 +618,8 @@ export function findBiggestSurprise(
     : `${player.name} rated themselves ${trait.selfScore} on ${TRAIT_FRIENDLY[trait.dimension]}. Their friends said ${trait.groupAvg}. There's a story in that gap.`
 
   const whatItMeans = direction === 'blind_spot'
-    ? `In the Johari Window, this is a Blind Spot. ${player.name} has a strength in ${TRAIT_FRIENDLY[trait.dimension]} that's invisible to them but obvious to everyone around them. That's the kind of thing that changes how you see yourself, if you let it.`
-    : `In the Johari Window, this is a Mask. ${player.name} projects more ${adj.high} energy than their friends perceive. The gap isn't good or bad. It's information.`
+    ? `This is a Hidden Strength. ${player.name} has something in ${TRAIT_FRIENDLY[trait.dimension]} that's invisible to them but obvious to everyone around them. Their friends see it clearly. They just need to notice it too.`
+    : `This is a Mask. ${player.name} projects more ${adj.high} energy than their friends perceive. The gap isn't good or bad. It's information worth having.`
 
   return {
     playerName: player.name,

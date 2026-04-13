@@ -1,10 +1,8 @@
 'use client'
 
 /**
- * Social Mirror Logo
- * Rounded square with coral→orange→gold gradient border + subtle glow.
- * Inner "SM" lettermark in white.
- * Fully scalable via the `size` prop.
+ * Social Mirror Logo — Gradient mirror icon.
+ * An oval mirror shape with a gradient border and a subtle reflection line.
  */
 
 interface SocialMirrorLogoProps {
@@ -13,68 +11,43 @@ interface SocialMirrorLogoProps {
 }
 
 export default function SocialMirrorLogo({ size = 40, className = '' }: SocialMirrorLogoProps) {
-  const r = size * 0.22   // corner radius
-  const sw = size * 0.055 // stroke width
-  const inset = sw / 2    // keep stroke inside viewBox
-
   return (
     <svg
       width={size}
       height={size}
-      viewBox={`0 0 ${size} ${size}`}
+      viewBox="0 0 48 48"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       aria-label="Social Mirror"
     >
       <defs>
-        <linearGradient id="sm-border" x1="0" y1="0" x2={size} y2={size} gradientUnits="userSpaceOnUse">
+        <linearGradient id="sm-grad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#FF4D6A" />
           <stop offset="50%" stopColor="#FF8A5C" />
           <stop offset="100%" stopColor="#FFD166" />
         </linearGradient>
-        <filter id="sm-glow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation={size * 0.05} result="blur" />
-          <feComposite in="SourceGraphic" in2="blur" operator="over" />
-        </filter>
+        <linearGradient id="sm-shine" x1="14" y1="8" x2="28" y2="36" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="white" stopOpacity="0.6" />
+          <stop offset="50%" stopColor="white" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="white" stopOpacity="0" />
+        </linearGradient>
       </defs>
 
-      {/* Background fill */}
-      <rect
-        x={inset}
-        y={inset}
-        width={size - sw}
-        height={size - sw}
-        rx={r}
-        fill="#1A1A1A"
-      />
+      {/* Mirror shape — rounded oval */}
+      <ellipse cx="24" cy="24" rx="18" ry="21" fill="#1A1A1A" />
+      <ellipse cx="24" cy="24" rx="18" ry="21"
+        stroke="url(#sm-grad)" strokeWidth="2.5" fill="none" />
 
-      {/* Gradient border */}
-      <rect
-        x={inset}
-        y={inset}
-        width={size - sw}
-        height={size - sw}
-        rx={r}
-        stroke="url(#sm-border)"
-        strokeWidth={sw}
-        filter="url(#sm-glow)"
-      />
+      {/* Inner mirror surface */}
+      <ellipse cx="24" cy="24" rx="14.5" ry="17.5" fill="#2A2A35" />
 
-      {/* SM lettermark */}
-      <text
-        x="50%"
-        y="54%"
-        dominantBaseline="middle"
-        textAnchor="middle"
-        fill="white"
-        fontFamily="system-ui, sans-serif"
-        fontWeight="800"
-        fontSize={size * 0.35}
-        letterSpacing={-size * 0.02}
-      >
-        SM
-      </text>
+      {/* Reflection shine */}
+      <ellipse cx="19" cy="18" rx="7" ry="10"
+        fill="url(#sm-shine)" transform="rotate(-15 19 18)" />
+
+      {/* Small sparkle dot */}
+      <circle cx="17" cy="14" r="1.5" fill="white" opacity="0.8" />
     </svg>
   )
 }
