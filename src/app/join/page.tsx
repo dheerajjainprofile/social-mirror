@@ -68,8 +68,9 @@ function JoinForm() {
         if (res.status === 409 && data.existingPlayerId && data.roomCode) {
           const storedId = typeof window !== 'undefined' ? localStorage.getItem('gtg_player_id') : null
           if (storedId && storedId === data.existingPlayerId) {
+            localStorage.setItem(`sm-token-${data.roomCode}`, data.existingPlayerId)
             navigated = true
-            router.push(`/room/${data.roomCode}/player/${data.existingPlayerId}`)
+            router.push(`/mirror/${data.roomCode}`)
             return
           }
         }
@@ -100,8 +101,10 @@ function JoinForm() {
         }
       }
 
+      // Store token for mirror page
+      localStorage.setItem(`sm-token-${data.session.room_code}`, data.player.id)
       navigated = true
-      router.push(`/room/${data.session.room_code}/player/${data.player.id}`)
+      router.push(`/mirror/${data.session.room_code}`)
     } catch {
       setError('Network error. Please try again.')
     } finally {

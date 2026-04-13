@@ -178,6 +178,8 @@ function StartPageInner() {
         localStorage.setItem('gtg_name', organizerName)
         localStorage.setItem('gtg_player_id', data.player.id)
         localStorage.setItem('gtg_session_id', data.session.id)
+        // Store token for mirror page auth
+        localStorage.setItem(`sm-token-${data.room_code}`, data.player.id)
         if (packId) localStorage.setItem('gtg_last_pack_id', packId)
         if (data.player.player_token) {
           localStorage.setItem('gtg_player_token', data.player.player_token)
@@ -185,7 +187,7 @@ function StartPageInner() {
       }
 
       navigated = true
-      router.push(`/room/${data.room_code}/organizer`)
+      router.push(`/mirror/${data.room_code}`)
     } catch {
       setError('Network error. Please try again.')
     } finally {
