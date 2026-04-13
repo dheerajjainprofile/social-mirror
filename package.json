@@ -1,0 +1,48 @@
+{
+  "name": "guessing-the-guess",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui",
+    "e2e:api": "playwright test src/e2e/api-full-game.test.ts --project=\"Desktop Chrome\"",
+    "test:all": "vitest run && playwright test",
+    "test:unit": "vitest run",
+    "test:components": "vitest run --config vitest.component.config.ts",
+    "test:all-unit": "vitest run && vitest run --config vitest.component.config.ts"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.10.0",
+    "@supabase/supabase-js": "^2.101.0",
+    "@types/canvas-confetti": "^1.9.0",
+    "canvas-confetti": "^1.9.4",
+    "next": "16.2.1",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "uqr": "^0.1.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.0.1",
+    "@vitest/coverage-v8": "^4.1.2",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.1",
+    "jsdom": "^29.0.1",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^4.1.2"
+  }
+}

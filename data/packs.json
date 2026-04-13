@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Warm-up",
+    "energy_type": "warmup",
+    "description": "Easy starters — get everyone comfortable"
+  },
+  {
+    "name": "Revealing",
+    "energy_type": "revealing",
+    "description": "Learn something real about your friends"
+  },
+  {
+    "name": "Chaotic",
+    "energy_type": "chaotic",
+    "description": "High spread, wild guesses, big laughs"
+  },
+  {
+    "name": "Savage",
+    "energy_type": "savage",
+    "description": "Playful embarrassment — only with people you trust"
+  },
+  {
+    "name": "Office — Safe",
+    "energy_type": "office_safe",
+    "description": "Work-appropriate questions for team bonding"
+  },
+  {
+    "name": "Office — Unfiltered",
+    "energy_type": "office_unfiltered",
+    "description": "Honest workplace truths — for teams who keep it real"
+  }
+]

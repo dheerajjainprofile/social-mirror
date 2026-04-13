@@ -1,0 +1,189 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-space-grotesk), Arial, Helvetica, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-space-grotesk), Arial, Helvetica, sans-serif;
+}
+
+/* Number input — remove spinners */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+/* ── Micro-animations ──────────────────────────────────────────── */
+
+/* Button bounce on click */
+button:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+/* Score count-up pulse */
+@keyframes score-pulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.25); color: #a78bfa; }
+  100% { transform: scale(1); }
+}
+.animate-score-pulse {
+  animation: score-pulse 0.5s ease-out;
+}
+
+/* Floating number drift (landing page) */
+@keyframes float-drift {
+  0%   { transform: translateY(0px) rotate(0deg); opacity: 0.15; }
+  33%  { transform: translateY(-18px) rotate(3deg); opacity: 0.25; }
+  66%  { transform: translateY(-8px) rotate(-2deg); opacity: 0.18; }
+  100% { transform: translateY(0px) rotate(0deg); opacity: 0.15; }
+}
+.animate-float {
+  animation: float-drift var(--float-duration, 6s) ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
+}
+
+/* Round start flash */
+@keyframes round-flash-in {
+  0%   { opacity: 0; transform: scale(0.7); }
+  60%  { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes round-flash-out {
+  0%   { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.15); }
+}
+.animate-round-in  { animation: round-flash-in  0.45s cubic-bezier(.2,.8,.4,1) forwards; }
+.animate-round-out { animation: round-flash-out 0.35s ease-in forwards; }
+
+/* Pulsing ellipsis for waiting states */
+@keyframes dot-pulse {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+  40%           { opacity: 1;   transform: scale(1); }
+}
+.dot-pulse span {
+  display: inline-block;
+  animation: dot-pulse 1.4s ease-in-out infinite;
+}
+.dot-pulse span:nth-child(2) { animation-delay: 0.2s; }
+.dot-pulse span:nth-child(3) { animation-delay: 0.4s; }
+
+/* Leaderboard row slide */
+@keyframes lb-slide-in {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.animate-lb-slide {
+  animation: lb-slide-in 0.35s ease-out forwards;
+}
+
+/* Winner celebration name */
+@keyframes winner-pop {
+  0%   { opacity: 0; transform: scale(0.5) rotate(-4deg); }
+  70%  { transform: scale(1.12) rotate(1deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+.animate-winner-pop {
+  animation: winner-pop 0.6s cubic-bezier(.2,.8,.4,1) forwards;
+}
+
+/* Position indicator flash */
+@keyframes pos-up   { from { color: #4ade80; transform: translateY(4px); } to { color: #4ade80; transform: translateY(0); } }
+@keyframes pos-down { from { color: #f87171; transform: translateY(-4px); } to { color: #f87171; transform: translateY(0); } }
+.animate-pos-up   { animation: pos-up   0.4s ease-out; }
+.animate-pos-down { animation: pos-down 0.4s ease-out; }
+
+/* ── How it Works — landing page scene animations ─────────────── */
+
+/* Card entrance: slide up + fade in, staggered per card */
+@keyframes hiw-card-in {
+  0%   { opacity: 0; transform: translateY(24px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.hiw-card {
+  opacity: 0;
+  animation: hiw-card-in 0.6s cubic-bezier(.2,.8,.4,1) forwards;
+}
+.hiw-card-1 { animation-delay: 0.1s; }
+.hiw-card-2 { animation-delay: 0.35s; }
+.hiw-card-3 { animation-delay: 0.6s; }
+
+/* Connecting arrow fade-pulse */
+@keyframes hiw-arrow {
+  0%, 100% { opacity: 0.3; }
+  50%      { opacity: 0.8; }
+}
+.hiw-arrow {
+  animation: hiw-arrow 2s ease-in-out infinite;
+}
+.hiw-arrow-1 { animation-delay: 0.25s; }
+.hiw-arrow-2 { animation-delay: 0.5s; }
+
+/* Question card: soft purple glow pulse */
+@keyframes hiw-glow-purple {
+  0%, 100% { box-shadow: 0 0 12px rgba(139, 92, 246, 0.15); }
+  50%      { box-shadow: 0 0 24px rgba(139, 92, 246, 0.4); }
+}
+.hiw-glow-purple {
+  animation: hiw-glow-purple 3s ease-in-out infinite;
+}
+
+/* Guess bubbles: pop in with bounce, staggered */
+@keyframes hiw-bubble-pop {
+  0%   { opacity: 0; transform: scale(0); }
+  60%  { opacity: 1; transform: scale(1.15); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.hiw-bubble {
+  opacity: 0;
+  animation: hiw-bubble-pop 0.4s cubic-bezier(.2,.8,.4,1) forwards;
+}
+.hiw-bubble-1 { animation-delay: 0.5s; }
+.hiw-bubble-2 { animation-delay: 0.7s; }
+.hiw-bubble-3 { animation-delay: 0.9s; }
+
+/* Target badge: rose glow pulse */
+@keyframes hiw-glow-rose {
+  0%, 100% { box-shadow: 0 0 8px rgba(244, 63, 94, 0.2); }
+  50%      { box-shadow: 0 0 20px rgba(244, 63, 94, 0.6); }
+}
+.hiw-glow-rose {
+  animation: hiw-glow-rose 2.5s ease-in-out infinite;
+}
+
+/* Trophy bounce */
+@keyframes hiw-trophy-bounce {
+  0%   { transform: translateY(0); }
+  30%  { transform: translateY(-6px); }
+  50%  { transform: translateY(0); }
+  70%  { transform: translateY(-3px); }
+  100% { transform: translateY(0); }
+}
+.hiw-trophy {
+  animation: hiw-trophy-bounce 2s ease-in-out infinite;
+  animation-delay: 0.8s;
+}
+
+/* Winner card amber shimmer */
+@keyframes hiw-shimmer {
+  0%   { box-shadow: 0 0 8px rgba(245, 158, 11, 0.2); }
+  50%  { box-shadow: 0 0 20px rgba(245, 158, 11, 0.5), 0 0 40px rgba(245, 158, 11, 0.15); }
+  100% { box-shadow: 0 0 8px rgba(245, 158, 11, 0.2); }
+}
+.hiw-shimmer {
+  animation: hiw-shimmer 2.5s ease-in-out infinite;
+  animation-delay: 0.9s;
+}
