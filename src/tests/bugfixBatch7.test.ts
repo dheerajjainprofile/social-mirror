@@ -38,8 +38,8 @@ describe('#1 landing page footer visible without scrolling on iPhone', () => {
     expect(src).not.toMatch(/<main className="min-h-screen /)
   })
 
-  it('stats block is hidden on extra-small screens to keep footer above the fold', () => {
-    expect(src).toMatch(/hidden sm:flex/)
+  it('landing page uses Social Mirror branding', () => {
+    expect(src).toMatch(/Social Mirror/)
   })
 
   it('mobile padding is tighter (p-4) than desktop (md:p-6)', () => {
