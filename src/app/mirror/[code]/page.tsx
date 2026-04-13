@@ -206,12 +206,14 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
   useEffect(() => { refreshRef.current = refresh }, [refresh])
 
   // Auto-advance: when all group raters have submitted during group-rating phase,
-  // organizer auto-advances to mini-reveal
+  // organizer auto-advances to mini-reveal. Uses advanceRef to avoid
+  // "used before declaration" errors (advanceRound defined later in component).
   const autoAdvanceCheckedRef = useRef<string | null>(null)
+  const advanceRef = useRef<(() => void) | null>(null)
+
   useEffect(() => {
     if (!isOrganizer || !session?.id || !currentRound) return
     if (currentRound.status !== 'group-rating') return
-    // Only check once per round to avoid loops
     const roundKey = `${currentRound.id}-group`
     if (autoAdvanceCheckedRef.current === roundKey) return
 
@@ -233,11 +235,11 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
 
       if (allSubmitted) {
         autoAdvanceCheckedRef.current = roundKey
-        advanceRound()
+        advanceRef.current?.()
       }
     }
     checkAllSubmitted()
-  }, [isOrganizer, session?.id, currentRound?.id, currentRound?.status, players, advanceRound, currentRound?.round_number, currentRound?.target_player_id])
+  }, [isOrganizer, session?.id, currentRound?.id, currentRound?.status, players, currentRound?.round_number, currentRound?.target_player_id])
 
   useEffect(() => {
     const handler = () => {
@@ -366,6 +368,9 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
     }
     setAdvancing(false)
   }
+
+  // Keep advanceRef in sync (used by auto-advance effect defined earlier in the component)
+  advanceRef.current = advanceRound
 
   // ─── Derived state ────────────────────────────────────────────
 
