@@ -6,6 +6,7 @@ import SocialMirrorLogo from '@/components/SocialMirrorLogo'
 import MirrorRatingSlider from '@/components/MirrorRatingSlider'
 import MiniReveal from '@/components/MiniReveal'
 import MirrorRevealSequence from '@/components/MirrorRevealSequence'
+import { ensureProfile, linkSessionToProfile, saveDisplayName, getDisplayName } from '@/lib/identity'
 import type { SessionReport } from '@/lib/mirrorEngine'
 import { parseMirrorQuestionText } from '@/lib/mirrorUtils'
 import { encode as encodeQR } from 'uqr'
@@ -54,7 +55,7 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
   // UI state
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [nameInput, setNameInput] = useState('')
+  const [nameInput, setNameInput] = useState(getDisplayName() ?? '')
   const [joining, setJoining] = useState(false)
   const [starting, setStarting] = useState(false)
   const [synthesizing, setSynthesizing] = useState(false)
@@ -204,6 +205,40 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
 
   useEffect(() => { refreshRef.current = refresh }, [refresh])
 
+  // Auto-advance: when all group raters have submitted during group-rating phase,
+  // organizer auto-advances to mini-reveal
+  const autoAdvanceCheckedRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (!isOrganizer || !session?.id || !currentRound) return
+    if (currentRound.status !== 'group-rating') return
+    // Only check once per round to avoid loops
+    const roundKey = `${currentRound.id}-group`
+    if (autoAdvanceCheckedRef.current === roundKey) return
+
+    const checkAllSubmitted = async () => {
+      const nonOrgNonTarget = players.filter(
+        (p) => !p.is_organizer && p.id !== currentRound.target_player_id
+      )
+      if (nonOrgNonTarget.length === 0) return
+
+      const { data: ratings } = await supabase
+        .from('mirror_ratings')
+        .select('rater_player_id')
+        .eq('session_id', session.id)
+        .eq('round_number', currentRound.round_number)
+        .not('rater_player_id', 'is', null)
+
+      const submittedIds = new Set((ratings ?? []).map((r) => r.rater_player_id))
+      const allSubmitted = nonOrgNonTarget.every((p) => submittedIds.has(p.id))
+
+      if (allSubmitted) {
+        autoAdvanceCheckedRef.current = roundKey
+        advanceRound()
+      }
+    }
+    checkAllSubmitted()
+  }, [isOrganizer, session?.id, currentRound?.id, currentRound?.status, players, advanceRound, currentRound?.round_number, currentRound?.target_player_id])
+
   useEffect(() => {
     const handler = () => {
       if (document.visibilityState === 'visible') setLastVisible(Date.now())
@@ -241,6 +276,12 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
         setMe(data.player)
         setIsOrganizer(data.player.is_organizer)
         localStorage.setItem(`sm-token-${code}`, data.player.id)
+        saveDisplayName(nameInput.trim())
+        // Persistent identity: create/link profile
+        const profileId = await ensureProfile(nameInput.trim())
+        if (profileId && data.session?.id) {
+          await linkSessionToProfile(data.session.id, data.player.id, profileId)
+        }
         await refresh()
       }
     } catch (e) {

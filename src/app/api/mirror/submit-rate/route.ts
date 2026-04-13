@@ -1,36 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { z } from 'zod'
+
+const RatingSchema = z.object({
+  session_id: z.string().uuid(),
+  round_number: z.number().int().min(1),
+  subject_player_id: z.string().uuid(),
+  rater_player_id: z.string().uuid().nullable().optional(),
+  question_id: z.string().uuid(),
+  score: z.number().int().min(1).max(7),
+})
 
 /**
  * POST /api/mirror/submit-rate
  *
- * Submit a rating for a mirror round.
- * Handles both self-ratings (subject rates themselves) and group-ratings (others rate the subject).
- *
- * Body: {
- *   session_id: string
- *   round_number: number
- *   subject_player_id: string
- *   rater_player_id: string | null   (null = self-rating)
- *   question_id: string
- *   score: number (1-7)
- * }
+ * Submit a rating for a mirror round. Validated with Zod.
  */
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { session_id, round_number, subject_player_id, rater_player_id, question_id, score } = body
-
-    // Validate required fields
-    if (!session_id || round_number == null || !subject_player_id || !question_id || score == null) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    const parsed = RatingSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.issues[0]?.message || 'Invalid input' }, { status: 400 })
     }
-
-    // Validate score range
-    const scoreNum = Number(score)
-    if (!Number.isInteger(scoreNum) || scoreNum < 1 || scoreNum > 7) {
-      return NextResponse.json({ error: 'Score must be an integer between 1 and 7' }, { status: 400 })
-    }
+    const { session_id, round_number, subject_player_id, rater_player_id, question_id, score: scoreNum } = parsed.data
 
     // Validate session exists and is active
     const { data: session } = await supabase

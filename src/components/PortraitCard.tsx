@@ -158,7 +158,7 @@ export default function PortraitCard({ portrait, animDelay = 0 }: PortraitCardPr
         </div>
 
         {/* Reflection Prompt — ALWAYS visible */}
-        <div className="p-4 rounded-2xl" style={{ background: '#F8F7F4', border: '1px solid #EEEBE6' }}>
+        <div className="p-4 rounded-2xl mb-4" style={{ background: '#F8F7F4', border: '1px solid #EEEBE6' }}>
           <div className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#888' }}>
             💭 One Question to Sit With
           </div>
@@ -166,6 +166,29 @@ export default function PortraitCard({ portrait, animDelay = 0 }: PortraitCardPr
             "{reflectionPrompt.question}"
           </p>
         </div>
+
+        {/* Share button */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/api/mirror/card/${portrait.playerId}/${portrait.playerId}`
+            if (typeof navigator !== 'undefined' && navigator.share) {
+              navigator.share({
+                title: `${playerName}'s Social Mirror Portrait`,
+                text: `${playerName} is ${role.emoji} ${role.name}. Self-awareness: ${selfAwarenessScore}/100. See yourself through your friends' eyes.`,
+                url: shareUrl,
+              }).catch(() => {})
+            } else if (typeof navigator !== 'undefined') {
+              navigator.clipboard.writeText(
+                `${playerName} is ${role.emoji} ${role.name}. Self-awareness: ${selfAwarenessScore}/100.\nSee yourself through your friends' eyes: ${typeof window !== 'undefined' ? window.location.origin : ''}`
+              ).then(() => alert('Copied to clipboard!'))
+            }
+          }}
+          className="w-full py-2.5 rounded-xl text-xs font-bold transition-all hover:scale-[1.02] active:scale-[0.98]"
+          style={{ background: '#F3F1ED', color: '#888' }}
+        >
+          📤 Share this portrait
+        </button>
       </div>
     </div>
   )

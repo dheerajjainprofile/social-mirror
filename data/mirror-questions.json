@@ -1,181 +1,181 @@
 [
   {
     "id": "o1",
-    "text": "How adventurous is {player} when it comes to trying new things?",
+    "text": "If everyone here quit their jobs tomorrow, how likely is {player} to actually do something crazy like move to Goa?",
     "dimension": "openness",
-    "anchor_low": "Sticks to what they know",
-    "anchor_high": "First to try anything"
+    "anchor_low": "Would update their LinkedIn first",
+    "anchor_high": "Already looking at flights"
   },
   {
     "id": "o2",
-    "text": "How creative is {player}?",
+    "text": "How likely is {player} to order something completely random off a menu they can't read?",
     "dimension": "openness",
-    "anchor_low": "Practical, by-the-book",
-    "anchor_high": "Full of wild ideas"
+    "anchor_low": "Paneer tikka. Always.",
+    "anchor_high": "Points at mystery item, no questions asked"
   },
   {
     "id": "o3",
-    "text": "How open is {player} to changing their mind?",
+    "text": "If someone suggests a midnight road trip RIGHT NOW, how fast does {player} say yes?",
     "dimension": "openness",
-    "anchor_low": "Once decided, that's it",
-    "anchor_high": "Always reconsidering"
+    "anchor_low": "Needs a 3-day plan first",
+    "anchor_high": "Already grabbing the car keys"
   },
   {
     "id": "o4",
-    "text": "How curious is {player} about things outside their usual world?",
+    "text": "How likely is {player} to completely change their opinion after a good argument?",
     "dimension": "openness",
-    "anchor_low": "Happy in their lane",
-    "anchor_high": "Into everything"
+    "anchor_low": "Their mind is a fortress",
+    "anchor_high": "\"Actually, you know what, you're right\""
   },
   {
     "id": "o5",
-    "text": "How likely is {player} to pick the weird option on a menu?",
+    "text": "How likely is {player} to start a random hobby that nobody asked for?",
     "dimension": "openness",
-    "anchor_low": "Butter chicken every time",
-    "anchor_high": "Whatever sounds strangest"
+    "anchor_low": "Hasn't changed since 2019",
+    "anchor_high": "Has 4 half-finished hobbies right now"
   },
 
   {
     "id": "c1",
-    "text": "How organized is {player}'s life?",
+    "text": "If the group is planning a trip, how likely is {player} to be the one with the spreadsheet?",
     "dimension": "conscientiousness",
-    "anchor_low": "Beautiful chaos",
-    "anchor_high": "Everything has a system"
+    "anchor_low": "\"Just tell me when to show up\"",
+    "anchor_high": "Has a color-coded itinerary"
   },
   {
     "id": "c2",
-    "text": "How reliable is {player} when they say they'll do something?",
+    "text": "How likely is {player} to actually show up on time?",
     "dimension": "conscientiousness",
-    "anchor_low": "Intentions are good, follow-through... less so",
-    "anchor_high": "If they said it, it's happening"
+    "anchor_low": "\"5 more minutes\" (30 min ago)",
+    "anchor_high": "Arrives and judges everyone else"
   },
   {
     "id": "c3",
-    "text": "How much does {player} plan ahead vs. wing it?",
+    "text": "If {player} says \"I'll send it by tonight,\" what are the actual chances?",
     "dimension": "conscientiousness",
-    "anchor_low": "Plans are suggestions",
-    "anchor_high": "Has a spreadsheet for everything"
+    "anchor_low": "You'll get it next week. Maybe.",
+    "anchor_high": "Already in your inbox"
   },
   {
     "id": "c4",
-    "text": "How punctual is {player}?",
+    "text": "How likely is {player}'s phone to be on low battery right now?",
     "dimension": "conscientiousness",
-    "anchor_low": "IST (Indian Stretchable Time)",
-    "anchor_high": "Arrives before the host"
+    "anchor_low": "Charges at 80% \"just in case\"",
+    "anchor_high": "Living on 3% and vibes"
   },
   {
     "id": "c5",
-    "text": "How disciplined is {player} about finishing what they start?",
+    "text": "How likely is {player} to finish a Netflix series they started?",
     "dimension": "conscientiousness",
-    "anchor_low": "27 half-finished projects",
-    "anchor_high": "Sees everything through"
+    "anchor_low": "Has 27 shows at episode 2",
+    "anchor_high": "Finishes every series, even the bad ones"
   },
 
   {
     "id": "e1",
-    "text": "How much does {player} light up a room when they walk in?",
+    "text": "Walk into a party where {player} knows nobody. What happens in the first 10 minutes?",
     "dimension": "extraversion",
-    "anchor_low": "Ninja entrance",
-    "anchor_high": "Everyone notices"
+    "anchor_low": "Finds the dog or the bookshelf",
+    "anchor_high": "Already has 3 new best friends"
   },
   {
     "id": "e2",
-    "text": "How energized does {player} get from being around people?",
+    "text": "How likely is {player} to be the loudest person at this table right now?",
     "dimension": "extraversion",
-    "anchor_low": "Needs alone time to recharge",
-    "anchor_high": "People ARE the recharge"
+    "anchor_low": "You have to lean in to hear them",
+    "anchor_high": "The next table knows their opinion too"
   },
   {
     "id": "e3",
-    "text": "How likely is {player} to start a conversation with a stranger?",
+    "text": "After a full day with people, how quickly does {player} need alone time?",
     "dimension": "extraversion",
-    "anchor_low": "Would rather not",
-    "anchor_high": "Already best friends with the waiter"
+    "anchor_low": "Was mentally done 2 hours ago",
+    "anchor_high": "\"Why is everyone leaving already?\""
   },
   {
     "id": "e4",
-    "text": "How loud is {player} in a group?",
+    "text": "How likely is {player} to become friends with the auto driver / waiter / random uncle?",
     "dimension": "extraversion",
-    "anchor_low": "You have to lean in to hear them",
-    "anchor_high": "You can hear them from the next room"
+    "anchor_low": "Headphones in, eye contact avoided",
+    "anchor_high": "Knows their life story in 5 minutes"
   },
   {
     "id": "e5",
-    "text": "How comfortable is {player} being the center of attention?",
+    "text": "If someone handed {player} a mic at a party, what happens?",
     "dimension": "extraversion",
-    "anchor_low": "Actively avoids it",
-    "anchor_high": "Born for the spotlight"
+    "anchor_low": "Physically runs away",
+    "anchor_high": "Doesn't give it back for an hour"
   },
 
   {
     "id": "a1",
-    "text": "How likely is {player} to go along with what the group wants?",
+    "text": "The group can't decide where to eat. How likely is {player} to just go along with whatever?",
     "dimension": "agreeableness",
-    "anchor_low": "My way or the highway",
-    "anchor_high": "Whatever makes everyone happy"
+    "anchor_low": "\"No, not there. And not there either.\"",
+    "anchor_high": "\"Anything works for me!\""
   },
   {
     "id": "a2",
-    "text": "How empathetic is {player}?",
+    "text": "Someone in the group is clearly upset but saying \"I'm fine.\" How likely is {player} to actually check on them?",
     "dimension": "agreeableness",
-    "anchor_low": "Tough love approach",
-    "anchor_high": "Feels what you feel"
+    "anchor_low": "Takes \"I'm fine\" at face value",
+    "anchor_high": "Already texted them privately"
   },
   {
     "id": "a3",
-    "text": "How likely is {player} to avoid conflict?",
+    "text": "How likely is {player} to say the uncomfortable truth nobody else will?",
     "dimension": "agreeableness",
-    "anchor_low": "Will say the uncomfortable thing",
-    "anchor_high": "Peacekeeper at all costs"
+    "anchor_low": "\"Someone had to say it.\"",
+    "anchor_high": "Would rather keep the peace"
   },
   {
     "id": "a4",
-    "text": "How generous is {player} with their time for others?",
+    "text": "It's 2 AM and {player} gets a call from a friend who needs help. What happens?",
     "dimension": "agreeableness",
-    "anchor_low": "Protects their time fiercely",
-    "anchor_high": "Drops everything to help"
+    "anchor_low": "Phone is on DND after 11",
+    "anchor_high": "Already putting on shoes"
   },
   {
     "id": "a5",
-    "text": "How trusting is {player} of new people?",
+    "text": "How quickly does {player} trust someone they just met?",
     "dimension": "agreeableness",
-    "anchor_low": "Trust is earned slowly",
-    "anchor_high": "Trusts until proven wrong"
+    "anchor_low": "Trust is earned over years",
+    "anchor_high": "Trusts everyone until proven wrong"
   },
 
   {
     "id": "s1",
-    "text": "How chill is {player} under pressure?",
+    "text": "Flight is delayed by 4 hours. How does {player} react?",
     "dimension": "stability",
-    "anchor_low": "Stress spiral incoming",
-    "anchor_high": "Ice in their veins"
+    "anchor_low": "Writing a complaint email by minute 10",
+    "anchor_high": "Already found a lounge and ordered chai"
   },
   {
     "id": "s2",
-    "text": "How much does {player} overthink things?",
+    "text": "How likely is {player} to still be thinking about that one embarrassing thing from 3 years ago?",
     "dimension": "stability",
-    "anchor_low": "Decides and moves on",
-    "anchor_high": "Still thinking about that thing from 2019"
+    "anchor_low": "\"What embarrassing thing?\"",
+    "anchor_high": "Replays it at 2 AM regularly"
   },
   {
     "id": "s3",
-    "text": "How quickly does {player} bounce back from a bad day?",
+    "text": "Something goes wrong at work. How fast does {player} bounce back?",
     "dimension": "stability",
-    "anchor_low": "Carries it for a while",
-    "anchor_high": "Already over it by dinner"
+    "anchor_low": "Carries it for days",
+    "anchor_high": "\"That happened? Oh yeah, I'm over it\""
   },
   {
     "id": "s4",
-    "text": "How easily does {player} get frustrated?",
+    "text": "The WiFi goes out during an important call. What's {player}'s reaction?",
     "dimension": "stability",
-    "anchor_low": "Fuse is... short",
-    "anchor_high": "Nothing bothers them"
+    "anchor_low": "Full meltdown, calls the ISP",
+    "anchor_high": "Switches to mobile data, doesn't blink"
   },
   {
     "id": "s5",
-    "text": "How much does {player} worry about what others think of them?",
+    "text": "How much does {player} care about what random people think of them?",
     "dimension": "stability",
-    "anchor_low": "Could not care less",
-    "anchor_high": "Replays every conversation"
+    "anchor_low": "Genuinely does not care",
+    "anchor_high": "Replays every social interaction like a movie"
   }
 ]

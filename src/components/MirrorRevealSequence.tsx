@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type {} from 'react' // keep react import for ViewProfileLink
 import type { SessionReport } from '@/lib/mirrorEngine'
 import PortraitCard from './PortraitCard'
 import BiggestSurpriseCard from './BiggestSurpriseCard'
@@ -173,13 +175,16 @@ export default function MirrorRevealSequence({
             <div className="text-sm mb-4" style={{ color: '#888' }}>
               Play again with different friends. See what changes.
             </div>
-            <a
-              href="/"
-              className="inline-block px-8 py-3 rounded-full font-bold text-white text-sm"
-              style={{ background: 'linear-gradient(135deg, #FF4D6A, #FF8A5C)' }}
-            >
-              Play Again
-            </a>
+            <div className="flex flex-col gap-2 items-center">
+              <a
+                href="/"
+                className="inline-block px-8 py-3 rounded-full font-bold text-white text-sm"
+                style={{ background: 'linear-gradient(135deg, #FF4D6A, #FF8A5C)' }}
+              >
+                Play Again
+              </a>
+              <ViewProfileLink />
+            </div>
           </div>
         )}
       </div>
@@ -195,5 +200,25 @@ export default function MirrorRevealSequence({
         }
       `}</style>
     </div>
+  )
+}
+
+/** Small helper: shows "View your Mirror Profile" link if profile exists */
+function ViewProfileLink() {
+  const [profileId, setProfileId] = useState<string | null>(null)
+  useEffect(() => {
+    import('@/lib/identity').then(({ getMyProfileId }) => {
+      getMyProfileId().then(setProfileId)
+    })
+  }, [])
+  if (!profileId) return null
+  return (
+    <a
+      href={`/profile/${profileId}`}
+      className="text-xs font-semibold underline underline-offset-2"
+      style={{ color: '#FF4D6A' }}
+    >
+      View your Mirror Profile →
+    </a>
   )
 }
