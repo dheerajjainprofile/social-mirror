@@ -62,6 +62,15 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
   const [synthesizing, setSynthesizing] = useState(false)
   const [advancing, setAdvancing] = useState(false)
 
+  // Sync state — ALL declared here to avoid "used before initialization" errors
+  const sessionIdRef = useRef<string | null>(null)
+  const [lastVisible, setLastVisible] = useState(0)
+  const [realtimeTick, setRealtimeTick] = useState(0)
+  const refreshRef = useRef<(() => void) | null>(null)
+  const selfAdvanceCheckedRef = useRef<string | null>(null)
+  const autoAdvanceCheckedRef = useRef<string | null>(null)
+  const advanceRef = useRef<(() => void) | null>(null)
+
   // Mini-reveal data for current round
   const [miniRevealData, setMiniRevealData] = useState<{
     selfScore: number; groupAvg: number; gap: number
@@ -183,14 +192,6 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
     loadReport()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.status, players.length, report, realtimeTick])
-
-  // Session ID ref — always-current, no stale closure issues
-  const sessionIdRef = useRef<string | null>(null)
-
-  // Realtime reconnect + tick counter (forces auto-advance effects to re-check)
-  const [lastVisible, setLastVisible] = useState(0)
-  const [realtimeTick, setRealtimeTick] = useState(0)
-  const refreshRef = useRef<(() => void) | null>(null)
 
   // ─── Load session ───────────────────────────────────────────
 
@@ -328,9 +329,6 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
   }, [session?.id, session?.status])
 
   // Auto-advance SELF-RATING → GROUP-RATING:
-  // When the subject submits their self-rating, the organizer's client detects it
-  // via realtime and auto-advances. No button needed for this transition.
-  const selfAdvanceCheckedRef = useRef<string | null>(null)
   useEffect(() => {
     if (!isOrganizer || !session?.id || !currentRound) return
     if (currentRound.status !== 'self-rating') return
@@ -354,9 +352,6 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
   }, [isOrganizer, session?.id, currentRound?.id, currentRound?.status, currentRound?.round_number, realtimeTick])
 
   // Auto-advance GROUP-RATING → MINI-REVEAL:
-  // When all group raters have submitted, organizer auto-advances.
-  const autoAdvanceCheckedRef = useRef<string | null>(null)
-  const advanceRef = useRef<(() => void) | null>(null)
 
   useEffect(() => {
     if (!isOrganizer || !session?.id || !currentRound) return
