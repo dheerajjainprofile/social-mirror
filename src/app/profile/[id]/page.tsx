@@ -41,29 +41,35 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
         .from('session_profiles').select('session_id, player_id').eq('profile_id', id)
 
       if (links && links.length > 0) {
-        const sessionEntries: SessionEntry[] = []
-        for (const link of links) {
-          const { data: sess } = await supabase
-            .from('sessions').select('room_code, created_at').eq('id', link.session_id).single()
-          const { data: portrait } = await supabase
-            .from('mirror_portraits').select('role, trait_scores, portrait_text')
-            .eq('session_id', link.session_id).eq('player_id', link.player_id).single()
+        // Batch fetch: avoid N+1 by fetching all sessions and portraits in parallel
+        const sessionIds = links.map((l) => l.session_id)
+        const [{ data: sessions }, { data: portraits }] = await Promise.all([
+          supabase.from('sessions').select('id, room_code, created_at').in('id', sessionIds),
+          supabase.from('mirror_portraits').select('session_id, player_id, role, trait_scores, portrait_text')
+            .in('session_id', sessionIds),
+        ])
 
-          if (sess) {
-            const parsed = portrait?.portrait_text
-              ? (typeof portrait.portrait_text === 'string' ? JSON.parse(portrait.portrait_text) : portrait.portrait_text)
-              : {}
-            sessionEntries.push({
-              session_id: link.session_id,
-              room_code: sess.room_code,
-              date: new Date(sess.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
-              role: portrait?.role || 'Unknown',
-              selfAwarenessScore: parsed?.selfAwarenessScore ?? 50,
-              traitSummary: (portrait?.trait_scores as Record<string, { self: number; group: number; gap: number }>) ?? {},
-            })
+        const sessMap = new Map((sessions ?? []).map((s) => [s.id, s]))
+        const portMap = new Map((portraits ?? []).map((p) => [`${p.session_id}-${p.player_id}`, p]))
+
+        const sessionEntries: SessionEntry[] = links.map((link) => {
+          const sess = sessMap.get(link.session_id)
+          const portrait = portMap.get(`${link.session_id}-${link.player_id}`)
+          const parsed = portrait?.portrait_text
+            ? (typeof portrait.portrait_text === 'string' ? JSON.parse(portrait.portrait_text) : portrait.portrait_text)
+            : {}
+          return {
+            session_id: link.session_id,
+            room_code: sess?.room_code ?? '???',
+            date: sess ? new Date(sess.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '',
+            role: portrait?.role || 'Unknown',
+            selfAwarenessScore: parsed?.selfAwarenessScore ?? 50,
+            traitSummary: (portrait?.trait_scores as Record<string, { self: number; group: number; gap: number }>) ?? {},
           }
-        }
-        setSessions(sessionEntries.sort((a, b) => b.date.localeCompare(a.date)))
+        }).filter((e) => e.room_code !== '???')
+          .sort((a, b) => b.session_id.localeCompare(a.session_id)) // stable sort by ID
+
+        setSessions(sessionEntries)
       }
 
       setLoading(false)

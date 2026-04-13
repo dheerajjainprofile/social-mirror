@@ -4,6 +4,7 @@ import type { PlayerPortrait } from '@/lib/mirrorEngine'
 
 interface PortraitCardProps {
   portrait: PlayerPortrait
+  sessionId?: string
   animDelay?: number
 }
 
@@ -11,7 +12,7 @@ interface PortraitCardProps {
  * PortraitCard — Full personality reveal for one player.
  * Everything visible by default. No collapsed sections.
  */
-export default function PortraitCard({ portrait, animDelay = 0 }: PortraitCardProps) {
+export default function PortraitCard({ portrait, sessionId, animDelay = 0 }: PortraitCardProps) {
   const {
     playerName, role, traits, jopiMap, hiddenStrengths, masks,
     challengeCard, reflectionPrompt, headline, selfAwarenessScore,
@@ -171,7 +172,10 @@ export default function PortraitCard({ portrait, animDelay = 0 }: PortraitCardPr
         <button
           onClick={(e) => {
             e.stopPropagation()
-            const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/api/mirror/card/${portrait.playerId}/${portrait.playerId}`
+            const origin = window.location.origin
+            const shareUrl = sessionId
+              ? `${origin}/api/mirror/card/${sessionId}/${portrait.playerId}`
+              : origin
             if (typeof navigator !== 'undefined' && navigator.share) {
               navigator.share({
                 title: `${playerName}'s Social Mirror Portrait`,
@@ -180,7 +184,7 @@ export default function PortraitCard({ portrait, animDelay = 0 }: PortraitCardPr
               }).catch(() => {})
             } else if (typeof navigator !== 'undefined') {
               navigator.clipboard.writeText(
-                `${playerName} is ${role.emoji} ${role.name}. Self-awareness: ${selfAwarenessScore}/100.\nSee yourself through your friends' eyes: ${typeof window !== 'undefined' ? window.location.origin : ''}`
+                `${playerName} is ${role.emoji} ${role.name}. Self-awareness: ${selfAwarenessScore}/100.\nSee yourself through your friends' eyes: ${origin}`
               ).then(() => alert('Copied to clipboard!'))
             }
           }}

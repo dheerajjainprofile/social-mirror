@@ -55,7 +55,7 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
   // UI state
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [nameInput, setNameInput] = useState(getDisplayName() ?? '')
+  const [nameInput, setNameInput] = useState(() => getDisplayName() ?? '')
   const [joining, setJoining] = useState(false)
   const [starting, setStarting] = useState(false)
   const [synthesizing, setSynthesizing] = useState(false)
@@ -254,7 +254,7 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
       .on('postgres_changes', { event: '*', schema: 'public', table: 'sessions', filter: `id=eq.${session.id}` }, () => refreshRef.current?.())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'players', filter: `session_id=eq.${session.id}` }, () => refreshRef.current?.())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'rounds', filter: `session_id=eq.${session.id}` }, () => refreshRef.current?.())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'mirror_ratings' }, () => refreshRef.current?.())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mirror_ratings', filter: `session_id=eq.${session.id}` }, () => refreshRef.current?.())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'mirror_portraits' }, () => refreshRef.current?.())
       .subscribe()
     return () => { supabase.removeChannel(channel) }

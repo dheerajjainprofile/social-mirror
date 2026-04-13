@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type {} from 'react' // keep react import for ViewProfileLink
+import { getMyProfileId } from '@/lib/identity'
 import type { SessionReport } from '@/lib/mirrorEngine'
 import PortraitCard from './PortraitCard'
 import BiggestSurpriseCard from './BiggestSurpriseCard'
@@ -189,16 +188,7 @@ export default function MirrorRevealSequence({
         )}
       </div>
 
-      {/* CSS for fadeInUp animation */}
-      <style>{`
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeInUp {
-          animation: fadeInUp 0.6s ease-out both;
-        }
-      `}</style>
+      {/* fadeInUp animation defined in globals.css */}
     </div>
   )
 }
@@ -207,9 +197,7 @@ export default function MirrorRevealSequence({
 function ViewProfileLink() {
   const [profileId, setProfileId] = useState<string | null>(null)
   useEffect(() => {
-    import('@/lib/identity').then(({ getMyProfileId }) => {
-      getMyProfileId().then(setProfileId)
-    })
+    getMyProfileId().then(setProfileId)
   }, [])
   if (!profileId) return null
   return (

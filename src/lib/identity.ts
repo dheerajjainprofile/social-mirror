@@ -53,30 +53,17 @@ export async function ensureProfile(displayName: string): Promise<string | null>
   const localId = getLocalId()
   if (!localId) return null
 
-  // Check if profile already exists for this local ID
-  const { data: existing } = await supabase
+  // Upsert: create or update in a single call (eliminates TOCTOU race)
+  const { data } = await supabase
     .from('player_profiles')
-    .select('id')
-    .eq('local_id', localId)
-    .limit(1)
-
-  if (existing && existing.length > 0) {
-    // Update display name if changed
-    await supabase
-      .from('player_profiles')
-      .update({ display_name: displayName, updated_at: new Date().toISOString() })
-      .eq('id', existing[0].id)
-    return existing[0].id
-  }
-
-  // Create new profile
-  const { data: created } = await supabase
-    .from('player_profiles')
-    .insert({ local_id: localId, display_name: displayName })
+    .upsert(
+      { local_id: localId, display_name: displayName, updated_at: new Date().toISOString() },
+      { onConflict: 'local_id' }
+    )
     .select('id')
     .single()
 
-  return created?.id ?? null
+  return data?.id ?? null
 }
 
 /**
