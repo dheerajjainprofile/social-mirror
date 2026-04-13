@@ -67,6 +67,10 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
     selfScore: number; groupAvg: number; gap: number
   } | null>(null)
 
+  // Track how many group ratings submitted for current round
+  const [groupRatingCount, setGroupRatingCount] = useState(0)
+  const expectedRaters = players.filter((p) => !p.is_organizer && p.id !== currentRound?.target_player_id).length
+
   // Auto-compute mini-reveal data when round enters mini-reveal phase
   // This runs on ALL clients (not just organizer) via realtime
   useEffect(() => {
@@ -89,6 +93,96 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
     }
     fetchGap()
   }, [session?.id, currentRound?.id, currentRound?.status])
+
+  // Track group rating count during group-rating phase
+  useEffect(() => {
+    const sid = sessionIdRef.current
+    if (!sid || !currentRound || currentRound.status !== 'group-rating') {
+      setGroupRatingCount(0)
+      return
+    }
+    const fetchCount = async () => {
+      const { count } = await supabase
+        .from('mirror_ratings')
+        .select('id', { count: 'exact', head: true })
+        .eq('session_id', sid)
+        .eq('round_number', currentRound.round_number)
+        .not('rater_player_id', 'is', null)
+      setGroupRatingCount(count ?? 0)
+    }
+    fetchCount()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentRound?.id, currentRound?.status, realtimeTick])
+
+  // ALL PLAYERS: load report when session enters 'revealing' or 'ended'
+  useEffect(() => {
+    if (!session?.id || !players.length) return
+    if (session.status !== 'revealing' && session.status !== 'ended') return
+    if (report) return // already loaded
+
+    const loadReport = async () => {
+      const sid = sessionIdRef.current || session.id
+      const [{ data: portraits }, { data: sessData }] = await Promise.all([
+        supabase.from('mirror_portraits').select('*').eq('session_id', sid),
+        supabase.from('sessions').select('group_dynamics_result').eq('id', sid).single(),
+      ])
+
+      if (!portraits || portraits.length === 0) {
+        // Organizer hasn't synthesized yet — trigger it if we're the organizer
+        if (me?.is_organizer || isOrganizer) {
+          setSynthesizing(true)
+          const res = await fetch('/api/mirror/synthesize', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_id: sid, organizer_player_id: me?.id }),
+          })
+          const data = await res.json()
+          if (data.report) setReport(data.report)
+          setSynthesizing(false)
+        }
+        // Non-organizer: wait for portraits to appear (poll will catch it)
+        return
+      }
+
+      // Reconstruct report from stored data
+      const gd = (sessData?.group_dynamics_result ?? {}) as Record<string, unknown>
+      const plist = players.filter((p) => !p.is_organizer)
+
+      setReport({
+        portraits: portraits.map((p) => {
+          const parsed = typeof p.portrait_text === 'string' ? JSON.parse(p.portrait_text) : p.portrait_text ?? {}
+          const traitScores = (p.trait_scores ?? {}) as Record<string, { self: number; group: number; gap: number; raterCount?: number; consensus?: number }>
+          return {
+            playerName: plist.find((pl) => pl.id === p.player_id)?.name ?? players.find((pl) => pl.id === p.player_id)?.name ?? 'Player',
+            playerId: p.player_id,
+            traits: Object.entries(traitScores).map(([dim, v]) => ({
+              dimension: dim as 'openness' | 'conscientiousness' | 'extraversion' | 'agreeableness' | 'stability',
+              selfScore: v.self, groupAvg: v.group, gap: v.gap,
+              raterCount: v.raterCount ?? 0, consensus: v.consensus ?? 0,
+            })),
+            jopiMap: Object.entries(traitScores).map(([dim, v]) => ({
+              dimension: dim as 'openness' | 'conscientiousness' | 'extraversion' | 'agreeableness' | 'stability',
+              quadrant: (Math.abs(v.gap) <= 0.8 ? 'arena' : v.gap > 0.8 ? 'blind_spot' : 'mask') as 'arena' | 'blind_spot' | 'mask',
+              gap: v.gap,
+            })),
+            role: { name: p.role || 'The Original', emoji: ROLE_EMOJI[p.role as string] || '✨', description: '' },
+            hiddenStrengths: parsed?.hiddenStrengths ?? [],
+            masks: parsed?.masks ?? [],
+            challengeCard: parsed?.challengeCard ?? { dimension: 'openness', direction: 'blind_spot', challenge: '' },
+            reflectionPrompt: parsed?.reflectionPrompt ?? { dimension: 'openness', question: '' },
+            headline: parsed?.headline ?? '',
+            selfAwarenessScore: parsed?.selfAwarenessScore ?? 50,
+          }
+        }),
+        compatibility: (gd.compatibility ?? []) as SessionReport['compatibility'],
+        biggestSurprise: (gd.biggestSurprise ?? {}) as SessionReport['biggestSurprise'],
+        hotTake: (gd.hotTake ?? {}) as SessionReport['hotTake'],
+        groupRoles: (gd.groupRoles ?? []) as SessionReport['groupRoles'],
+      })
+    }
+    loadReport()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.status, players.length, report, realtimeTick])
 
   // Session ID ref — always-current, no stale closure issues
   const sessionIdRef = useRef<string | null>(null)
@@ -439,6 +533,7 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
   // ─── Derived state ────────────────────────────────────────────
 
   const nonOrgPlayers = players.filter((p) => !p.is_organizer)
+  const allActivePlayers = players.filter((p) => !p.is_organizer || p.id === me?.id) // everyone who plays
   const isMyTurn = currentRound?.target_player_id === me?.id
   const subjectName = players.find((p) => p.id === currentRound?.target_player_id)?.name ?? 'Someone'
   const parsedQ = currentRound ? parseMirrorQuestionText(currentRound.question_text) : { mirrorQuestionId: null, displayText: '' }
@@ -597,14 +692,14 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
           {isOrganizer && (
             <button
               onClick={startMirrorSession}
-              disabled={nonOrgPlayers.length < 2 || starting}
+              disabled={players.length < 2 || starting}
               className="w-full py-4 rounded-full font-black text-white text-base transition-all disabled:opacity-40 hover:scale-[1.02] active:scale-[0.98]"
               style={{
                 background: 'linear-gradient(135deg, #FF4D6A, #FF8A5C)',
                 boxShadow: '0 4px 24px rgba(255,77,106,0.25)',
               }}
             >
-              {starting ? 'Starting...' : `Start Mirror Session (${nonOrgPlayers.length} players)`}
+              {starting ? 'Starting...' : `Start Mirror Session (${players.length} players)`}
             </button>
           )}
 
@@ -742,7 +837,11 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
                   boxShadow: '0 4px 20px rgba(255,77,106,0.25)',
                 }}
               >
-                {advancing ? '...' : roundPhase === 'group-rating' ? '✨ Reveal the Gap' : '→ Next Round'}
+                {advancing ? '...' : roundPhase === 'group-rating'
+                  ? (groupRatingCount >= expectedRaters
+                    ? 'Reveal the Gap'
+                    : `${groupRatingCount}/${expectedRaters} rated — Reveal anyway`)
+                  : 'Next Round →'}
               </button>
             </div>
           )}

@@ -95,8 +95,8 @@ export async function POST(req: NextRequest) {
       .eq('session_id', session_id)
       .eq('removed', false)
 
+    // ALL players get portraits (organizer plays too)
     const subjects: PlayerInfo[] = (allPlayers ?? [])
-      .filter((p) => !p.is_organizer)
       .map((p) => ({ id: p.id, name: p.name }))
 
     if (subjects.length === 0) {
