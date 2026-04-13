@@ -39,6 +39,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Session not found or ended' }, { status: 404 })
     }
 
+    // Verify rater is a player in this session (prevents spoofed ratings)
+    if (rater_player_id) {
+      const { data: rater } = await supabase
+        .from('players').select('id, session_id').eq('id', rater_player_id).single()
+      if (!rater || rater.session_id !== session_id) {
+        return NextResponse.json({ error: 'Rater not in this session' }, { status: 403 })
+      }
+    }
+
+    // Verify subject is a player in this session
+    const { data: subject } = await supabase
+      .from('players').select('id, session_id').eq('id', subject_player_id).single()
+    if (!subject || subject.session_id !== session_id) {
+      return NextResponse.json({ error: 'Subject not in this session' }, { status: 403 })
+    }
+
     // For self-ratings: rater_player_id must match subject_player_id or be null
     const isSelfRating = !rater_player_id || rater_player_id === subject_player_id
 
