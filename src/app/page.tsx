@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import HunchLogo from '@/components/HunchLogo'
+import SocialMirrorLogo from '@/components/SocialMirrorLogo'
 
 // Bubbles stay within left: 5%–65% to avoid mobile overflow
 const FLOATING_BUBBLES = [
@@ -65,14 +65,14 @@ export default function HomePage() {
 
         {/* Brand */}
         <div className="flex items-center gap-4 mb-3 md:mb-6">
-          <HunchLogo size={64} />
-          <span className="text-white font-black text-4xl md:text-5xl tracking-tight">Hunch</span>
+          <SocialMirrorLogo size={64} />
+          <span className="text-white font-black text-4xl md:text-5xl tracking-tight">Social Mirror</span>
         </div>
 
         {/* Hero */}
         <div className="text-center mb-4 md:mb-6">
           <h1 className="text-lg md:text-xl font-bold text-slate-300 leading-tight tracking-tight">
-            How well do you know your friends?
+            See yourself through your friends' eyes
           </h1>
         </div>
 

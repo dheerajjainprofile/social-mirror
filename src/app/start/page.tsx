@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import HunchLogo from '@/components/HunchLogo'
+import SocialMirrorLogo from '@/components/SocialMirrorLogo'
 
 interface Pack {
   id: string
@@ -201,7 +201,7 @@ function StartPageInner() {
           <Link href="/" className="text-slate-400 hover:text-white transition-colors text-2xl shrink-0">
             ←
           </Link>
-          <HunchLogo size={40} />
+          <SocialMirrorLogo size={40} />
           <div>
             <h1 className="text-2xl font-black text-white">Host a Game</h1>
             <p className="text-slate-400 text-sm">You&apos;ll be the organizer</p>

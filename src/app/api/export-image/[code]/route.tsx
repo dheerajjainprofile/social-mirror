@@ -109,7 +109,7 @@ export async function GET(
   const date = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 
   // Deep link for QR — /start?pack=ID if pack exists, otherwise /start
-  const baseUrl = 'hunch.vercel.app'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/^https?:\/\//, '') || 'social-mirror.vercel.app'
   const deepLink = session.pack_id
     ? `https://${baseUrl}/start?pack=${session.pack_id}`
     : `https://${baseUrl}/start`
@@ -157,7 +157,7 @@ export async function GET(
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={{ fontSize: '26px', fontWeight: 900, color: 'white', letterSpacing: '-0.5px' }}>
-              🎯 Hunch
+              🪞 Social Mirror
             </div>
             <div style={{ fontSize: '13px', color: '#94a3b8', marginTop: '4px' }}>
               {subtitleText}

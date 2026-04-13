@@ -205,14 +205,13 @@ describe('#5 QR code points to the actual runtime host, not hardcoded production
     expect(src).toMatch(/const joinQR = useMemo\(\(\) => \{[\s\S]*window\.location\.origin/)
   })
 
-  it('still falls back to production URL during SSR (window undefined)', () => {
-    expect(src).toMatch(/typeof window !== 'undefined' \? window\.location\.origin : 'https:\/\/guessing-the-guess\.vercel\.app'/)
+  it('still falls back to env or localhost during SSR (window undefined)', () => {
+    expect(src).toMatch(/typeof window !== 'undefined' \? window\.location\.origin : \(process\.env\.NEXT_PUBLIC_APP_URL/)
   })
 
-  it('no longer hardcodes the production URL as the primary value', () => {
-    // If someone reverts to the old `const url = \`https://guessing-the-guess.vercel.app/join?...` pattern,
-    // this guard catches it.
+  it('no longer hardcodes any production URL as the primary value', () => {
     expect(src).not.toMatch(/const url = `https:\/\/guessing-the-guess\.vercel\.app\/join\?code/)
+    expect(src).not.toMatch(/const url = `https:\/\/social-mirror\.vercel\.app\/join\?code/)
   })
 })
 

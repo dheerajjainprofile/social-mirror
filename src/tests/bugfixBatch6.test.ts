@@ -115,7 +115,7 @@ describe('auto_passed semantics — scoring and badges', () => {
 describe('shareCopy — viral text + filename conventions', () => {
   it('badgeFileName includes player name and badge name', () => {
     const fname = badgeFileName('Dheeraj Jain', makeBadge())
-    expect(fname).toMatch(/^Hunch-Badge-/)
+    expect(fname).toMatch(/^Social Mirror-Badge-/)
     expect(fname).toMatch(/Dheeraj/)
     expect(fname).toMatch(/Vanga/)
     expect(fname).toMatch(/\.png$/)
@@ -128,7 +128,7 @@ describe('shareCopy — viral text + filename conventions', () => {
 
   it('sessionStoryFileName includes host + room + ISO date', () => {
     const fname = sessionStoryFileName('Dheeraj', 'ABC123')
-    expect(fname).toMatch(/^Hunch-Game-Dheeraj-ABC123-\d{4}-\d{2}-\d{2}\.png$/)
+    expect(fname).toMatch(/^Social Mirror-Game-Dheeraj-ABC123-\d{4}-\d{2}-\d{2}\.png$/)
   })
 
   it('badgeShareText embeds player name + link', () => {
@@ -137,7 +137,7 @@ describe('shareCopy — viral text + filename conventions', () => {
       badge: makeBadge(),
     })
     expect(text).toContain('Dheeraj')
-    expect(text).toMatch(/hunch\.vercel\.app|Play Hunch/)
+    expect(text).toMatch(/social-mirror\.vercel\.app|Play Social Mirror/)
   })
 
   it('badgeShareText per-badge hook differs by badge identity', () => {
@@ -165,7 +165,7 @@ describe('shareCopy — viral text + filename conventions', () => {
     expect(text).toContain('6')
     expect(text).toContain('12')
     expect(text).toContain('Priya')
-    expect(text).toMatch(/hunch\.vercel\.app|Host your own/)
+    expect(text).toMatch(/social-mirror\.vercel\.app|Host your own/)
   })
 })
 

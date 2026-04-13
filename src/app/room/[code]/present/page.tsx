@@ -312,7 +312,7 @@ export default function PresentPage({ params }: { params: Promise<{ code: string
           <div className="text-5xl font-black text-yellow-400 tracking-widest">{code}</div>
         </div>
         <div className="text-right">
-          <div className="text-slate-400 text-sm">Hunch</div>
+          <div className="text-slate-400 text-sm">Social Mirror</div>
           {currentRound && (
             <div className="text-white font-bold text-2xl">Round {currentRound.round_number}</div>
           )}
@@ -323,7 +323,7 @@ export default function PresentPage({ params }: { params: Promise<{ code: string
       {session?.status === 'lobby' && (
         <div className="text-center py-24">
           <div className="text-8xl mb-6">🎯</div>
-          <h1 className="text-5xl font-black text-white mb-4">Hunch</h1>
+          <h1 className="text-5xl font-black text-white mb-4">Social Mirror</h1>
           <p className="text-slate-400 text-2xl mb-8">Join with code:</p>
           <div className="text-8xl font-black text-yellow-400 tracking-widest mb-8">{code}</div>
           {joinUrl && (() => {

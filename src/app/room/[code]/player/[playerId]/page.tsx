@@ -16,7 +16,7 @@ import WinnerReveal from '@/components/WinnerReveal'
 import GameOverPlayer from '@/components/GameOverPlayer'
 import { assignBadges, type PlayerBadge, type GuessRecord, type RoundRecord } from '@/lib/badgeLogic'
 import { getAdaptiveRevealDelay } from '@/lib/revealTiming'
-import HunchLogo from '@/components/HunchLogo'
+import SocialMirrorLogo from '@/components/SocialMirrorLogo'
 
 interface Session {
   id: string
@@ -870,9 +870,9 @@ export default function PlayerPage({
       {/* Header */}
       <div className={`${isTargetGuessing ? 'bg-rose-900 border-rose-700' : 'bg-slate-900 border-slate-800'} border-b px-4 py-4 flex items-center justify-between sticky top-0 z-40`}>
         <div className="flex items-center gap-2.5">
-          <HunchLogo size={36} />
+          <SocialMirrorLogo size={36} />
           <div>
-            <div className="text-white font-black text-sm tracking-tight leading-none">Hunch</div>
+            <div className="text-white font-black text-sm tracking-tight leading-none">Social Mirror</div>
             <div className="text-xl font-black text-yellow-400 tracking-widest leading-none mt-0.5">{code}</div>
           </div>
         </div>
@@ -908,8 +908,8 @@ export default function PlayerPage({
         {session?.status === 'lobby' && (
           <div className="text-center py-12">
             <div className="flex items-center justify-center gap-3 mb-6">
-              <HunchLogo size={48} />
-              <span className="text-white font-black text-3xl tracking-tight">Hunch</span>
+              <SocialMirrorLogo size={48} />
+              <span className="text-white font-black text-3xl tracking-tight">Social Mirror</span>
             </div>
             <h2 className="text-xl font-bold text-slate-300 mb-2">Waiting for game to start...</h2>
             <p className="text-slate-400 mb-4">

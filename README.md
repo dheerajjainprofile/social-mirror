@@ -1,58 +1,44 @@
-# Guessing the Guess
+# Social Mirror
 
-**The number guessing game that reveals how well you actually know your friends.**
-
-🎮 **[Play it live →](https://guessing-the-guess.vercel.app/)**
+**See yourself through the eyes of everyone who knows you.**
 
 ---
 
 ## What it is
 
-Each round, one player secretly answers a numeric question about themselves. Everyone else tries to guess what *that specific person* said — not the right answer, their answer. Points go to whoever is closest.
+A personality reveal engine played with friends. Each round, one player is "in the mirror" — they rate themselves on a personality trait, and everyone else rates them too. After all rounds, AI synthesizes the gap between self-perception and friend-perception into shareable personality portraits.
 
-It's not trivia. It's a social mirror. Works in a living room or over a video call.
-
----
-
-## Screenshot / Demo
-
-> 📸 *Screenshot or GIF coming soon*
+It's not a personality test. It's a social mirror. The dissonance is the product.
 
 ---
 
 ## Tech Stack
 
-| Tech | Why |
-|---|---|
-| **Next.js (App Router)** | API routes + pages in one repo — no separate backend needed for a game this scope |
-| **Supabase Realtime** | All screens (organizer, players, TV display) sync in under a second via postgres_changes — no WebSocket infrastructure to manage |
-| **Vercel (Serverless)** | Every API call is a serverless function — zero server ops, scales to zero between sessions |
-| **No auth** | Deliberate. A party game lives or dies on how fast you can get everyone in the room. Room creation to first round in under 10 seconds — login friction would kill that |
+- **Frontend:** Next.js 16, React 19, Tailwind CSS 4
+- **Backend:** Supabase (Postgres + Realtime)
+- **AI:** Claude API (personality synthesis)
+- **Deployment:** Vercel
+- **Testing:** Vitest + Playwright
 
 ---
 
-## What's Built
+## Getting Started
 
-- **3 simultaneous screens** — Organizer controls, per-player view, TV/projector display — all synced live
-- **Full game loop** — room creation, player join, guessing, timed reveal animations, scoring, leaderboard
-- **Party Mode** — one tap to a live room; question packs, target rotation, and reveal mode all auto-configured
-- **13 Indian pop-culture badges** — algorithmically assigned at session end based on how you played. Did you guess exactly right twice? You're The Baba Vanga. Fastest to submit but always wrong? The Arnab Goswami.
-- **Shareable session cards** — WhatsApp-ready PNG generated server-side via Satori
-- **Mobile-first** — Safari tab-resume, Android join delay, iPhone WebSocket drops — all handled
-- **80+ tests** — unit, component, and E2E covering every critical flow
+```bash
+npm install
+npm run dev
+```
 
----
-
-## Key Documents
-
-- [Feature Spec v3](KEY_DOCUMENTS/FEATURE-SPEC-v3.md) — full product spec, written to be manually testable
-- [Architecture v3](KEY_DOCUMENTS/ARCHITECTURE-v3.md) — system diagram + key architectural decisions
-- [Decisions v3](KEY_DOCUMENTS/DECISIONS-v3.md) — every design and technical decision with rationale
+Set up environment variables:
+```
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+ANTHROPIC_API_KEY=your_claude_api_key
+```
 
 ---
 
-## Built By
+## Built by
 
-**Dheeraj Jain** — [LinkedIn](https://www.linkedin.com/in/dheerajjain-gim)
-
-Built solo using [Claude Code](https://claude.ai/code) — Anthropic's AI coding tool.
+[Dheeraj Jain](https://www.linkedin.com/in/dheerajjain-gim)

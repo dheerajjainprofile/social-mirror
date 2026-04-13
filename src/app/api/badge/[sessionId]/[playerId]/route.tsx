@@ -158,7 +158,7 @@ export async function GET(
           padding: '8px 20px',
         }}>
           <div style={{ fontSize: '15px', color: '#a78bfa', fontWeight: 700, letterSpacing: '2px', display: 'flex' }}>
-            🎯 HUNCH
+            🪞 SOCIAL MIRROR
           </div>
         </div>
 
@@ -290,7 +290,7 @@ export async function GET(
             background: '#334155', display: 'flex',
           }} />
           <div style={{ fontSize: '13px', color: '#6d28d9', fontWeight: 700, display: 'flex' }}>
-            hunch.vercel.app
+            social-mirror.vercel.app
           </div>
           <div style={{
             width: '3px', height: '3px', borderRadius: '50%',

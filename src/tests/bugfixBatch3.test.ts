@@ -24,13 +24,13 @@ async function badgeShareHandler(
     try {
       const blob = await fetchBlob(imageUrl)
       const file = new File([blob], 'my-badge.png', { type: 'image/png' })
-      await share({ files: [file], title: 'My Hunch badge' })
+      await share({ files: [file], title: 'My Social Mirror badge' })
       return 'shared'
     } catch {
       // fall through
     }
   }
-  createAndClickLink(imageUrl, 'hunch-badge.png')
+  createAndClickLink(imageUrl, 'social-mirror-badge.png')
   return 'downloaded'
 }
 
@@ -44,7 +44,7 @@ describe('Fix G: Badge share Web Share API + fallback', () => {
 
     expect(result).toBe('shared')
     expect(shareMock).toHaveBeenCalledOnce()
-    expect(shareMock.mock.calls[0][0]).toMatchObject({ title: 'My Hunch badge' })
+    expect(shareMock.mock.calls[0][0]).toMatchObject({ title: 'My Social Mirror badge' })
     expect(linkMock).not.toHaveBeenCalled()
   })
 
@@ -56,7 +56,7 @@ describe('Fix G: Badge share Web Share API + fallback', () => {
     const result = await badgeShareHandler('/api/badge/s/p', shareMock, linkMock, fetchBlob)
 
     expect(result).toBe('downloaded')
-    expect(linkMock).toHaveBeenCalledWith('/api/badge/s/p', 'hunch-badge.png')
+    expect(linkMock).toHaveBeenCalledWith('/api/badge/s/p', 'social-mirror-badge.png')
   })
 
   it('falls back to download when navigator.share is not available', async () => {
@@ -67,7 +67,7 @@ describe('Fix G: Badge share Web Share API + fallback', () => {
 
     expect(result).toBe('downloaded')
     expect(fetchBlob).not.toHaveBeenCalled()
-    expect(linkMock).toHaveBeenCalledWith('/api/badge/s/p', 'hunch-badge.png')
+    expect(linkMock).toHaveBeenCalledWith('/api/badge/s/p', 'social-mirror-badge.png')
   })
 
   it('shares correct session/player url', async () => {

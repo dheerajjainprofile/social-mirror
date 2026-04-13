@@ -18,7 +18,7 @@ import { soundWinner, soundCrowd, soundCardReveal, unlockSound } from '@/lib/sou
 import { useRouter } from 'next/navigation'
 import WinnerReveal from '@/components/WinnerReveal'
 import { getAdaptiveRevealDelay } from '@/lib/revealTiming'
-import HunchLogo from '@/components/HunchLogo'
+import SocialMirrorLogo from '@/components/SocialMirrorLogo'
 import { getPlayerColorByIndex } from '@/lib/playerColors'
 import { calculateScores } from '@/lib/utils'
 
@@ -156,7 +156,7 @@ export default function OrganizerPage({ params }: { params: Promise<{ code: stri
   // QR code for lobby join link — uses runtime origin so local testing scans to the right host
   // (SSR-safe fallback to production URL for the server-rendered pass).
   const joinQR = useMemo(() => {
-    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://guessing-the-guess.vercel.app'
+    const origin = typeof window !== 'undefined' ? window.location.origin : (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000')
     const url = `${origin}/join?code=${code.toUpperCase()}`
     return encodeQR(url, { ecc: 'M' })
   }, [code])
@@ -1090,7 +1090,7 @@ export default function OrganizerPage({ params }: { params: Promise<{ code: stri
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `hunch-${code}.png`
+      a.download = `social-mirror-${code}.png`
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
@@ -1172,7 +1172,7 @@ export default function OrganizerPage({ params }: { params: Promise<{ code: stri
       .from('rounds').select('*').eq('session_id', session.id).order('round_number', { ascending: true })
 
     const lines = [
-      `Hunch — Room ${code}`,
+      `Social Mirror — Room ${code}`,
       `Date: ${new Date().toLocaleDateString()}`,
       `Organizer: ${session.organizer_name}`,
       `Scoring Mode: ${session.scoring_mode}`,
@@ -1216,7 +1216,7 @@ export default function OrganizerPage({ params }: { params: Promise<{ code: stri
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `hunch-${code}.txt`
+    a.download = `social-mirror-${code}.txt`
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -1265,9 +1265,9 @@ export default function OrganizerPage({ params }: { params: Promise<{ code: stri
         {/* Row 1: identity ↔ actions */}
         <div className="px-4 py-2.5 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5 min-w-0">
-            <HunchLogo size={36} />
+            <SocialMirrorLogo size={36} />
             <div className="min-w-0">
-              <div className="text-white font-black text-sm tracking-tight leading-none">Hunch</div>
+              <div className="text-white font-black text-sm tracking-tight leading-none">Social Mirror</div>
               <div className="text-xl font-black text-yellow-400 tracking-widest leading-none mt-0.5">{code}</div>
             </div>
           </div>
@@ -1515,7 +1515,7 @@ export default function OrganizerPage({ params }: { params: Promise<{ code: stri
                     // 1. Try Web Share API (works in secure contexts on iOS / Android / Chrome)
                     try {
                       if (navigator.share) {
-                        await navigator.share({ title: 'Join my Hunch game!', url: joinUrl })
+                        await navigator.share({ title: 'Join my Social Mirror session!', url: joinUrl })
                         return
                       }
                     } catch (err) {

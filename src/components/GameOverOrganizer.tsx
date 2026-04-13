@@ -186,17 +186,17 @@ export default function GameOverOrganizer({
           fileName={
             hostBadge
               ? badgeFileName(organizerName, hostBadge)
-              : `Hunch-Badge-${organizerName.replace(/[^a-zA-Z0-9]+/g, '-') || 'Host'}.png`
+              : `Social-Mirror-Badge-${organizerName.replace(/[^a-zA-Z0-9]+/g, '-') || 'Host'}.png`
           }
           title={
             hostBadge
               ? badgeShareTitle({ playerName: organizerName, badge: hostBadge, roomCode })
-              : `${organizerName}'s Hunch badge`
+              : `${organizerName}'s Social Mirror badge`
           }
           shareText={
             hostBadge
               ? badgeShareText({ playerName: organizerName, badge: hostBadge, roomCode })
-              : `${organizerName} just ran a Hunch night — check out the badge from tonight's game. Play it: https://hunch.vercel.app`
+              : `${organizerName} just ran a Social Mirror session — check out the badge from tonight's game. Play it: https://social-mirror.vercel.app`
           }
         />
       )}

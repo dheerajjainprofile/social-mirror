@@ -9,21 +9,21 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Hunch",
-  description: "The number guessing game that reveals how well you know your friends.",
-  metadataBase: new URL("https://guessing-the-guess.vercel.app"),
+  title: "Social Mirror",
+  description: "See yourself through the eyes of everyone who knows you.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
   openGraph: {
-    title: "Hunch — How well do you know your friends?",
-    description: "Guess your friends' numbers. Closest wins. Find out who really knows who.",
-    url: "https://guessing-the-guess.vercel.app",
-    siteName: "Hunch",
+    title: "Social Mirror — See yourself through your friends' eyes",
+    description: "Play a game with friends. Get a personality portrait powered by AI. Discover the gap between how you see yourself and how others see you.",
+    url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+    siteName: "Social Mirror",
     locale: "en_IN",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hunch — The number guessing game",
-    description: "Guess your friends' numbers. Closest wins.",
+    title: "Social Mirror — Personality reveals, powered by friends",
+    description: "Your friends rate you. AI reveals the truth. The gap is the game.",
   },
 };
 

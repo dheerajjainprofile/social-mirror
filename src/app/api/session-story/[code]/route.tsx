@@ -124,7 +124,7 @@ export async function GET(
         >
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '32px' }}>
             <div style={{ color: '#a78bfa', fontSize: '13px', fontWeight: 700, letterSpacing: '2px' }}>
-              🎯 HUNCH · ROOM {code.toUpperCase()}
+              🪞 SOCIAL MIRROR · ROOM {code.toUpperCase()}
             </div>
             <div style={{ color: '#64748b', fontSize: '12px' }}>
               {date} · {playerCount} players · {roundCount} rounds
@@ -206,7 +206,7 @@ export async function GET(
           </div>
 
           <div style={{ color: '#334155', fontSize: '11px', marginTop: '20px', textAlign: 'right' }}>
-            hunch.vercel.app · Share the chaos 🎉
+            social-mirror.vercel.app · Share the chaos 🎉
           </div>
         </div>
       </div>
