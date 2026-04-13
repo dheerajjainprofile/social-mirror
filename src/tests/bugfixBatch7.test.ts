@@ -47,73 +47,35 @@ describe('#1 landing page footer visible without scrolling on iPhone', () => {
   })
 })
 
-// ─── #2 ─ iPhone Safari preset selector — tab bar (restored) ────────────────
-// The real root cause of the recurring iPhone tap bug was NOT button CSS — it was
-// Next.js 16 silently rejecting cross-origin dev requests from LAN IPs without
-// `allowedDevOrigins`. React never hydrated, so no button pattern would have fired.
-// With the config fix in place, the tab-bar layout from ab869aa is the preferred
-// visual design. These guards make sure we don't reintroduce tap-breaking patterns.
+// ─── #2 ─ Start page uses Social Mirror design system ────────────────────────
 
-describe('#2 host-game Quick Start / Custom use the tab-bar pattern', () => {
+describe('#2 start page uses Social Mirror Wrapped Energy design', () => {
   const src = read('src/app/start/page.tsx')
 
-  it('does NOT use onTouchEnd with preventDefault on the preset selector', () => {
-    // Guard: that pattern blocks iOS click synthesis.
-    expect(src).not.toMatch(/onTouchEnd=\{\(e\) => \{ e\.preventDefault\(\); setPreset/)
+  it('forces party preset for Social Mirror', () => {
+    expect(src).toMatch(/setPreset\('party'\)/)
   })
 
-  it('preset selector uses plain <button type="button"> with onClick', () => {
-    expect(src).toMatch(/onClick=\{\(\) => setPreset\('party'\)\}/)
-    expect(src).toMatch(/onClick=\{\(\) => setPreset\('custom'\)\}/)
+  it('uses warm cream background instead of dark slate', () => {
+    expect(src).toMatch(/FAF8F5/)
   })
 
-  it('preset buttons have touchAction: manipulation for iOS tap reliability', () => {
-    expect(src).toMatch(/touchAction: 'manipulation'/)
-  })
-
-  it('does NOT use transition-all on preset buttons (historical iOS tap-blocker)', () => {
-    // Restrict the search to the preset button region only.
-    const section = src.match(/flex rounded-2xl bg-slate-900 border border-slate-700 p-1 gap-1 mb-4[\s\S]*?setPreset\('custom'\)[\s\S]*?<\/button>/)
-    expect(section).not.toBeNull()
-    expect(section![0]).not.toMatch(/transition-all/)
+  it('routes to mirror page on room creation', () => {
+    expect(src).toMatch(/\/mirror\//)
   })
 })
 
-// ─── #3 ─ Preset buttons are a vibrant tab-bar with cyan Custom state ────────
+// ─── #3 ─ Join page uses Social Mirror design system ────────────────────────
 
-describe('#3 host-game Quick Start / Custom tab-bar visual state', () => {
-  const src = read('src/app/start/page.tsx')
+describe('#3 join page uses Social Mirror Wrapped Energy design', () => {
+  const src = read('src/app/join/page.tsx')
 
-  it('uses the tab-bar container (flex rounded-2xl p-1 gap-1)', () => {
-    expect(src).toMatch(/<div className="flex rounded-2xl bg-slate-900 border border-slate-700 p-1 gap-1 mb-4">/)
+  it('uses warm cream background', () => {
+    expect(src).toMatch(/FAF8F5/)
   })
 
-  it('preset buttons use flex-1 py-3 segmented-control classes', () => {
-    const matches = src.match(/className=\{`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-black text-sm cursor-pointer transition-colors/g)
-    expect(matches).not.toBeNull()
-    expect(matches!.length).toBeGreaterThanOrEqual(2)
-  })
-
-  it('Quick Start selected state uses vibrant purple→pink gradient with pink glow', () => {
-    expect(src).toMatch(/preset === 'party'[\s\S]{0,300}bg-gradient-to-r from-purple-600 to-pink-600[\s\S]{0,120}shadow-\[0_0_24px_rgba\(236,72,153/)
-  })
-
-  it('Custom selected state uses vibrant cyan→teal gradient with cyan glow (not old dull slate-600)', () => {
-    expect(src).toMatch(/preset === 'custom'[\s\S]{0,300}bg-gradient-to-r from-cyan-500 to-teal-500[\s\S]{0,120}shadow-\[0_0_24px_rgba\(34,211,238/)
-    // The old dull slate-600 style must NOT reappear.
-    expect(src).not.toMatch(/preset === 'custom'[\s\S]{0,200}bg-slate-600 text-white shadow-lg ring-1 ring-slate-500/)
-  })
-
-  it('label+radio experiment is gone (reverted to plain buttons)', () => {
-    expect(src).not.toMatch(/<label\s+htmlFor="preset-party"/)
-    expect(src).not.toMatch(/<input[\s\S]{0,160}type="radio"[\s\S]{0,160}id="preset-party"/)
-  })
-
-  it('debug strip scaffolding is removed', () => {
-    expect(src).not.toMatch(/showTapDebug/)
-    expect(src).not.toMatch(/tapLog/)
-    expect(src).not.toMatch(/native-debug-out/)
-    expect(src).not.toMatch(/v=dda1187-revert/)
+  it('routes to mirror page on join', () => {
+    expect(src).toMatch(/\/mirror\//)
   })
 })
 

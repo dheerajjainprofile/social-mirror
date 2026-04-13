@@ -117,18 +117,19 @@ function JoinForm() {
 
   if (gameEnded) {
     return (
-      <main className="min-h-screen bg-slate-950 p-6 flex flex-col items-center justify-center">
+      <main className="min-h-screen p-6 flex flex-col items-center justify-center" style={{ background: '#FAF8F5' }}>
         <div className="w-full max-w-md text-center space-y-5">
           <div className="text-6xl">🏁</div>
-          <h1 className="text-2xl font-black text-white">This game has ended</h1>
-          <p className="text-slate-400">The host has already wrapped up this session.</p>
+          <h1 className="text-2xl font-black" style={{ color: '#1A1A1A' }}>This session has ended</h1>
+          <p style={{ color: '#888' }}>The host has already wrapped up this session.</p>
           <Link
             href="/start"
-            className="inline-block w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-black text-lg rounded-2xl shadow-lg"
+            className="inline-block w-full py-4 text-white font-black text-lg rounded-full"
+            style={{ background: 'linear-gradient(135deg, #FF4D6A, #FF8A5C)' }}
           >
-            Start a new game →
+            Start a new session →
           </Link>
-          <Link href="/join" className="block text-slate-500 text-sm hover:text-slate-300">
+          <Link href="/join" className="block text-sm" style={{ color: '#999' }}>
             Try a different code
           </Link>
         </div>
@@ -137,23 +138,22 @@ function JoinForm() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 p-6 flex flex-col items-center">
+    <main className="min-h-screen p-6 flex flex-col items-center" style={{ background: '#FAF8F5' }}>
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="flex items-center gap-3 mb-8">
-          <Link href="/" className="text-slate-400 hover:text-white transition-colors text-2xl">
-            ←
-          </Link>
+          <Link href="/" className="text-2xl" style={{ color: '#CCC' }}>←</Link>
+          <SocialMirrorLogo size={36} />
           <div>
-            <h1 className="text-2xl font-black text-white">Join Game</h1>
-            <p className="text-slate-400 text-sm">Enter the room code to play</p>
+            <h1 className="text-2xl font-black" style={{ color: '#1A1A1A' }}>Join Session</h1>
+            <p className="text-sm" style={{ color: '#888' }}>Enter the room code to play</p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Room Code */}
           <div>
-            <label className="block text-slate-300 font-semibold mb-2 text-sm uppercase tracking-wider">
+            <label className="block font-semibold mb-2 text-xs uppercase tracking-wider" style={{ color: '#999' }}>
               Room Code
             </label>
             <input
@@ -162,7 +162,10 @@ function JoinForm() {
               onChange={(e) => setRoomCode(e.target.value.toUpperCase().slice(0, 6))}
               placeholder="XXXXXX"
               maxLength={6}
-              className="w-full bg-slate-800 border-2 border-slate-600 focus:border-purple-500 rounded-xl px-4 py-4 text-white placeholder-slate-500 text-3xl font-black text-center tracking-[0.5em] focus:outline-none transition-colors uppercase"
+              className="w-full rounded-xl px-4 py-4 text-3xl font-black text-center tracking-[0.5em] outline-none transition-all uppercase"
+              style={{ background: '#FFFFFF', border: '1.5px solid #EEEBE6', color: '#1A1A1A' }}
+              onFocus={(e) => (e.target.style.borderColor = '#FF4D6A')}
+              onBlur={(e) => (e.target.style.borderColor = '#EEEBE6')}
               autoComplete="off"
               autoCapitalize="characters"
             />
@@ -170,7 +173,7 @@ function JoinForm() {
 
           {/* Player Name */}
           <div>
-            <label className="block text-slate-300 font-semibold mb-2 text-sm uppercase tracking-wider">
+            <label className="block font-semibold mb-2 text-xs uppercase tracking-wider" style={{ color: '#999' }}>
               Your Name
             </label>
             <input
@@ -180,7 +183,10 @@ function JoinForm() {
               placeholder="Enter your name..."
               maxLength={30}
               autoComplete="off"
-              className="w-full bg-slate-800 border-2 border-slate-600 focus:border-purple-500 rounded-xl px-4 py-3 text-white placeholder-slate-500 text-lg font-semibold focus:outline-none transition-colors"
+              className="w-full rounded-xl px-4 py-3.5 text-lg font-semibold outline-none transition-all"
+              style={{ background: '#FFFFFF', border: '1.5px solid #EEEBE6', color: '#1A1A1A' }}
+              onFocus={(e) => (e.target.style.borderColor = '#FF4D6A')}
+              onBlur={(e) => (e.target.style.borderColor = '#EEEBE6')}
             />
           </div>
 
@@ -188,14 +194,15 @@ function JoinForm() {
           <button
             type="button"
             onClick={() => setRememberMe((v) => !v)}
-            className="flex items-center gap-3 text-slate-300 hover:text-white transition-colors"
+            className="flex items-center gap-3 transition-colors"
+            style={{ color: '#666' }}
           >
             <div
-              className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
-                rememberMe
-                  ? 'bg-purple-600 border-purple-500'
-                  : 'bg-slate-700 border-slate-500'
-              }`}
+              className="w-5 h-5 rounded flex items-center justify-center transition-all"
+              style={{
+                background: rememberMe ? '#FF4D6A' : '#EEEBE6',
+                border: rememberMe ? 'none' : '1.5px solid #D0CCC5',
+              }}
             >
               {rememberMe && <span className="text-white text-xs font-bold">✓</span>}
             </div>
@@ -203,7 +210,7 @@ function JoinForm() {
           </button>
 
           {error && (
-            <div className="bg-red-900/40 border border-red-500 text-red-300 rounded-xl px-4 py-3 text-sm">
+            <div className="rounded-xl px-4 py-3 text-sm" style={{ background: '#FFF5F5', border: '1px solid #FED7D7', color: '#FF4D6A' }}>
               {error}
             </div>
           )}
@@ -211,16 +218,20 @@ function JoinForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:from-slate-600 disabled:to-slate-600 text-white font-black text-lg rounded-2xl transition-all shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+            className="w-full py-4 text-white font-black text-lg rounded-full transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+            style={{
+              background: 'linear-gradient(135deg, #FF4D6A, #FF8A5C)',
+              boxShadow: '0 4px 24px rgba(255,77,106,0.25)',
+            }}
           >
-            {loading ? 'Joining...' : 'Join Game 🚀'}
+            {loading ? 'Joining...' : '🪞 Join Session'}
           </button>
         </form>
 
         <div className="mt-8 text-center">
-          <p className="text-slate-500 text-sm">
+          <p className="text-sm" style={{ color: '#999' }}>
             Want to host?{' '}
-            <Link href="/start" className="text-purple-400 hover:text-purple-300 font-semibold">
+            <Link href="/start" className="font-semibold" style={{ color: '#FF4D6A' }}>
               Create a room
             </Link>
           </p>

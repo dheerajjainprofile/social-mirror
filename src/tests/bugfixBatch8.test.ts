@@ -77,39 +77,23 @@ describe('#C organizer host-guess row (input + Submit + Pass) does not overflow 
 
 // ─── Fix A — /start page density tweaks ──────────────────────────────────────
 
-describe('#A /start page uses tighter mobile spacing', () => {
+describe('#A /start page uses Social Mirror design', () => {
   const src = read('src/app/start/page.tsx')
 
-  it('main element uses min-h-dvh + responsive p-4 md:p-6', () => {
-    expect(src).toMatch(/<main className="min-h-dvh bg-slate-950 p-4 md:p-6/)
+  it('uses warm cream background (Wrapped Energy)', () => {
+    expect(src).toMatch(/FAF8F5/)
   })
 
-  it('header margin is responsive (mb-5 md:mb-8)', () => {
-    expect(src).toMatch(/className="flex items-center gap-3 mb-5 md:mb-8"/)
+  it('forces party preset automatically', () => {
+    expect(src).toMatch(/setPreset\('party'\)/)
   })
 
-  it('name section uses mb-4 md:mb-6', () => {
-    expect(src).toMatch(/\{\/\* Name \*\/\}\s*\n\s*<div className="mb-4 md:mb-6">/)
+  it('routes to mirror page', () => {
+    expect(src).toMatch(/\/mirror\//)
   })
 
-  it('Quick Start panel only shows PackPicker (badges and I\'ll play too removed)', () => {
-    // Quick Start was simplified: no badge pills, no "I'll play too" toggle.
-    // Only the pack picker remains under the party preset.
-    expect(src).toMatch(/preset === 'party'/)
-    expect(src).toMatch(/PackPicker/)
-  })
-
-  it('party mode forces organizer_plays true in handleCreate', () => {
-    expect(src).toMatch(/preset === 'party' \? true : organizerPlays/)
-  })
-
-  it('"I\'ll play too" toggle is only in Custom mode', () => {
-    // The "I'll play too" text still exists in the custom panel
-    expect(src).toMatch(/I&apos;ll play too/)
-  })
-
-  it('PackPicker buttons use text-[11px] on mobile + truncate', () => {
-    expect(src).toMatch(/text-\[11px\] md:text-xs font-bold cursor-pointer truncate/)
+  it('stores mirror token for room', () => {
+    expect(src).toMatch(/sm-token-/)
   })
 })
 
