@@ -63,22 +63,45 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Cannot rate yourself as a group rater' }, { status: 400 })
     }
 
-    // Upsert the rating (handles retries/double-taps gracefully)
+    // Insert the rating. Use plain insert (not upsert) because Supabase
+    // doesn't support partial unique indexes in onConflict. On conflict
+    // (double-tap), the DB constraint rejects the duplicate and we return OK.
+    const insertData = {
+      session_id,
+      round_number,
+      subject_player_id,
+      rater_player_id: isSelfRating ? null : rater_player_id,
+      question_id,
+      score: scoreNum,
+    }
+
     const { data, error } = await supabase
       .from('mirror_ratings')
-      .upsert({
-        session_id,
-        round_number,
-        subject_player_id,
-        rater_player_id: isSelfRating ? null : rater_player_id,
-        question_id,
-        score: scoreNum,
-      }, {
-        onConflict: isSelfRating
-          ? 'session_id,round_number,subject_player_id,question_id'
-          : 'session_id,round_number,subject_player_id,rater_player_id,question_id',
-      })
+      .insert(insertData)
       .select()
+
+    // Handle duplicate rating gracefully (constraint violation = already submitted)
+    if (error && (error.code === '23505' || error.message?.includes('duplicate'))) {
+      // Update the existing rating instead
+      let query = supabase
+        .from('mirror_ratings')
+        .update({ score: scoreNum })
+        .eq('session_id', session_id)
+        .eq('round_number', round_number)
+        .eq('subject_player_id', subject_player_id)
+        .eq('question_id', question_id)
+      if (isSelfRating) {
+        query = query.is('rater_player_id', null)
+      } else {
+        query = query.eq('rater_player_id', rater_player_id)
+      }
+      const { error: updateErr } = await query
+      if (updateErr) {
+        console.error('submit-rate update error:', updateErr)
+        return NextResponse.json({ error: 'Failed to update rating' }, { status: 500 })
+      }
+      return NextResponse.json({ ok: true, updated: true })
+    }
 
     if (error) {
       console.error('submit-rate error:', error)

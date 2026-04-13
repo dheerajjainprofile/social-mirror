@@ -64,12 +64,15 @@ export async function POST(req: NextRequest) {
     const assignments = await selectMirrorQuestions(shuffledSubjects.length, 2)
 
     // Create rounds in the database
+    // Note: question_id FK on rounds table references the old 'questions' table.
+    // For mirror rounds, we store the mirror_question_id in the question_text field
+    // as a prefix: "mq:{id}|{text}" and parse it where needed. question_id stays null.
     const roundInserts = assignments.map((a, idx) => ({
       session_id,
       round_number: idx + 1,
       target_player_id: shuffledSubjects[a.subjectIndex].id,
-      question_text: a.question.text.replace('{player}', shuffledSubjects[a.subjectIndex].name),
-      question_id: a.question.id,
+      question_text: `mq:${a.question.id}|${a.question.text.replace('{player}', shuffledSubjects[a.subjectIndex].name)}`,
+      question_id: null, // null because FK references old questions table, not mirror_questions
       status: idx === 0 ? 'self-rating' : 'waiting',
       started_at: idx === 0 ? new Date().toISOString() : null,
     }))

@@ -7,6 +7,7 @@ import MirrorRatingSlider from '@/components/MirrorRatingSlider'
 import MiniReveal from '@/components/MiniReveal'
 import MirrorRevealSequence from '@/components/MirrorRevealSequence'
 import type { SessionReport } from '@/lib/mirrorEngine'
+import { parseMirrorQuestionText } from '@/lib/mirrorUtils'
 import { encode as encodeQR } from 'uqr'
 
 // ─── Types ──────────────────────────────────────────────────────
@@ -254,7 +255,7 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
         round_number: currentRound.round_number,
         subject_player_id: currentRound.target_player_id,
         rater_player_id: isSelfRating ? null : me.id,
-        question_id: currentRound.question_id,
+        question_id: mirrorQuestionId || currentRound.question_id,
         score,
       }),
     })
@@ -301,6 +302,9 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
   const nonOrgPlayers = players.filter((p) => !p.is_organizer)
   const isMyTurn = currentRound?.target_player_id === me?.id
   const subjectName = players.find((p) => p.id === currentRound?.target_player_id)?.name ?? 'Someone'
+  const parsedQ = currentRound ? parseMirrorQuestionText(currentRound.question_text) : { mirrorQuestionId: null, displayText: '' }
+  const displayQuestion = parsedQ.displayText
+  const mirrorQuestionId = parsedQ.mirrorQuestionId
   const totalRounds = allRounds.length
   const currentRoundNum = currentRound?.round_number ?? 0
 
@@ -503,7 +507,7 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
           {/* Self-rating phase */}
           {roundPhase === 'self-rating' && isMyTurn && (
             <MirrorRatingSlider
-              question={currentRound.question_text}
+              question={displayQuestion}
               subjectName={me.name}
               anchorLow="1 — Not at all"
               anchorHigh="7 — Extremely"
@@ -527,7 +531,7 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
           {/* Group-rating phase */}
           {roundPhase === 'group-rating' && !isMyTurn && (
             <MirrorRatingSlider
-              question={currentRound.question_text}
+              question={displayQuestion}
               subjectName={subjectName}
               anchorLow="1 — Not at all"
               anchorHigh="7 — Extremely"
@@ -543,7 +547,7 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
                 Your friends are rating you...
               </div>
               <div className="text-sm" style={{ color: '#888' }}>
-                {currentRound.question_text}
+                {displayQuestion}
               </div>
             </div>
           )}
@@ -552,7 +556,7 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
           {roundPhase === 'mini-reveal' && miniRevealData && (
             <MiniReveal
               subjectName={subjectName}
-              questionText={currentRound.question_text}
+              questionText={displayQuestion}
               selfScore={miniRevealData.selfScore}
               groupAvg={miniRevealData.groupAvg}
               gap={miniRevealData.gap}
