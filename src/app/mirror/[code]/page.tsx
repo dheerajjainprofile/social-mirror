@@ -90,8 +90,9 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
     fetchGap()
   }, [session?.id, currentRound?.id, currentRound?.status])
 
-  // Realtime reconnect
+  // Realtime reconnect + tick counter (forces auto-advance effects to re-check)
   const [lastVisible, setLastVisible] = useState(0)
+  const [realtimeTick, setRealtimeTick] = useState(0)
   const refreshRef = useRef<(() => void) | null>(null)
 
   // ─── Load session ───────────────────────────────────────────
@@ -202,6 +203,8 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
       ) || rounds[rounds.length - 1]
       setCurrentRound(active)
     }
+    // Increment tick so auto-advance effects re-check
+    setRealtimeTick((t) => t + 1)
   }, [session?.id])
 
   useEffect(() => { refreshRef.current = refresh }, [refresh])
@@ -229,7 +232,8 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
       }
     }
     checkSelfSubmitted()
-  }, [isOrganizer, session?.id, currentRound?.id, currentRound?.status, currentRound?.round_number])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOrganizer, session?.id, currentRound?.id, currentRound?.status, currentRound?.round_number, realtimeTick])
 
   // Auto-advance GROUP-RATING → MINI-REVEAL:
   // When all group raters have submitted, organizer auto-advances.
@@ -264,7 +268,8 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
       }
     }
     checkAllSubmitted()
-  }, [isOrganizer, session?.id, currentRound?.id, currentRound?.status, players, currentRound?.round_number, currentRound?.target_player_id])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOrganizer, session?.id, currentRound?.id, currentRound?.status, players, currentRound?.round_number, currentRound?.target_player_id, realtimeTick])
 
   useEffect(() => {
     const handler = () => {
@@ -299,17 +304,32 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
         body: JSON.stringify({ room_code: code, player_name: nameInput.trim() }),
       })
       const data = await res.json()
+
+      // Handle 409: name already taken = this is a rejoin
+      if (res.status === 409 && data.existingPlayerId) {
+        const existingPlayer = players.find((p) => p.id === data.existingPlayerId)
+          || { id: data.existingPlayerId, name: nameInput.trim(), is_organizer: false, session_id: session.id }
+        setMe(existingPlayer as Player)
+        setIsOrganizer(existingPlayer.is_organizer ?? false)
+        localStorage.setItem(`sm-token-${code}`, data.existingPlayerId)
+        saveDisplayName(nameInput.trim())
+        await refresh()
+        setJoining(false)
+        return
+      }
+
       if (data.player) {
         setMe(data.player)
         setIsOrganizer(data.player.is_organizer)
         localStorage.setItem(`sm-token-${code}`, data.player.id)
         saveDisplayName(nameInput.trim())
-        // Persistent identity: create/link profile
         const profileId = await ensureProfile(nameInput.trim())
         if (profileId && data.session?.id) {
           await linkSessionToProfile(data.session.id, data.player.id, profileId)
         }
         await refresh()
+      } else if (!res.ok) {
+        setError(data.error || 'Failed to join')
       }
     } catch (e) {
       setError('Failed to join')
