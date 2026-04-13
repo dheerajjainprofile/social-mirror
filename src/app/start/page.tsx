@@ -179,7 +179,7 @@ function StartPageInner() {
         localStorage.setItem('gtg_player_id', data.player.id)
         localStorage.setItem('gtg_session_id', data.session.id)
         // Store token for mirror page auth
-        localStorage.setItem(`sm-token-${data.room_code}`, data.player.id)
+        sessionStorage.setItem(`sm-token-${data.room_code}`, data.player.id)
         if (packId) localStorage.setItem('gtg_last_pack_id', packId)
         if (data.player.player_token) {
           localStorage.setItem('gtg_player_token', data.player.player_token)
@@ -237,17 +237,14 @@ function StartPageInner() {
           />
         </div>
 
-        {/* What to expect */}
-        <div className="mb-5 p-4 rounded-2xl" style={{ background: '#FFFFFF', border: '1px solid #EEEBE6' }}>
-          <div className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#999' }}>
-            What happens next
-          </div>
-          <div className="space-y-2 text-sm" style={{ color: '#666' }}>
-            <div className="flex items-start gap-2"><span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: '#FF4D6A' }} /><span>Friends rate each other on personality traits (1-7)</span></div>
-            <div className="flex items-start gap-2"><span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: '#FF8A5C' }} /><span>See the gap between self-perception and friend-perception</span></div>
-            <div className="flex items-start gap-2"><span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: '#FFD166' }} /><span>Get a personality portrait with hidden strengths and challenge cards</span></div>
-          </div>
-          <div className="mt-3 text-xs" style={{ color: '#BBB' }}>~20-25 minutes with 4-8 players</div>
+        {/* Quick info */}
+        <div className="mb-5 flex items-center justify-center gap-4 py-3 px-4 rounded-xl text-xs"
+          style={{ background: 'rgba(255,77,106,0.04)', color: '#888' }}>
+          <span>2-8 players</span>
+          <span style={{ color: '#DDD' }}>·</span>
+          <span>~20 min</span>
+          <span style={{ color: '#DDD' }}>·</span>
+          <span>Personality portraits</span>
         </div>
 
         {error && (

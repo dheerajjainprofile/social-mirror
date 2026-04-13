@@ -29,7 +29,7 @@ export default function HomePage() {
           See yourself through the eyes of everyone who knows you.
         </p>
 
-        {/* CTAs — clean, no emojis */}
+        {/* CTAs */}
         <div className="flex flex-col gap-3 md:gap-4 w-full mb-8 md:mb-10">
           <Link
             href="/start"
@@ -54,90 +54,75 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* How it works — concise, point 3 is the hero */}
+        {/* How it works — minimal, visual */}
         <div className="w-full mb-8 md:mb-10">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-center mb-4"
-            style={{ color: '#BBB' }}>
-            3 steps. 20 minutes. Real insights.
-          </h2>
-
-          {/* Steps 1-2: compact */}
-          <div className="flex gap-2 mb-2">
-            <div className="flex-1 rounded-xl p-3 border"
-              style={{ background: '#FFFFFF', borderColor: '#EEEBE6' }}>
-              <div className="text-xs font-black mb-0.5" style={{ color: '#FF4D6A' }}>1. Rate</div>
-              <div className="text-[11px]" style={{ color: '#888' }}>
-                Rate your friends on personality traits. They rate you too.
-              </div>
+          <div className="flex items-center justify-center gap-3 mb-5">
+            {/* Step pills */}
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: 'rgba(255,77,106,0.08)' }}>
+              <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black text-white" style={{ background: '#FF4D6A' }}>1</div>
+              <span className="text-xs font-bold" style={{ color: '#FF4D6A' }}>Rate</span>
             </div>
-            <div className="flex-1 rounded-xl p-3 border"
-              style={{ background: '#FFFFFF', borderColor: '#EEEBE6' }}>
-              <div className="text-xs font-black mb-0.5" style={{ color: '#FF8A5C' }}>2. Reveal</div>
-              <div className="text-[11px]" style={{ color: '#888' }}>
-                See the gap between how you see yourself and how others see you.
-              </div>
+            <div style={{ color: '#DDD' }}>→</div>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: 'rgba(255,138,92,0.08)' }}>
+              <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black text-white" style={{ background: '#FF8A5C' }}>2</div>
+              <span className="text-xs font-bold" style={{ color: '#FF8A5C' }}>Reveal</span>
+            </div>
+            <div style={{ color: '#DDD' }}>→</div>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: 'rgba(255,209,102,0.08)' }}>
+              <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black text-white" style={{ background: '#FFD166' }}>3</div>
+              <span className="text-xs font-bold" style={{ color: '#CC9B30' }}>Discover</span>
             </div>
           </div>
 
-          {/* Step 3: the hero card — what you GET */}
+          {/* The hero takeaway card */}
           <div className="rounded-2xl p-5 border-2"
-            style={{ background: '#FFFFFF', borderColor: '#FF4D6A', borderStyle: 'solid' }}>
-            <div className="text-xs font-black mb-2" style={{ color: '#FF4D6A' }}>3. Your Mirror Portrait</div>
-            <div className="text-sm font-semibold mb-3" style={{ color: '#1A1A1A' }}>
-              Every player gets a personalized personality portrait:
+            style={{ background: '#FFFFFF', borderColor: '#FF4D6A' }}>
+            <div className="text-sm font-black mb-3" style={{ color: '#1A1A1A' }}>
+              Every player gets:
             </div>
-            <div className="grid grid-cols-2 gap-2 text-[11px]" style={{ color: '#555' }}>
-              <div className="flex items-start gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full mt-1 shrink-0" style={{ background: '#00B894' }} />
-                <span>Hidden strengths you don't see</span>
+            <div className="grid grid-cols-2 gap-3 text-xs" style={{ color: '#555' }}>
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-sm" style={{ background: 'rgba(0,184,148,0.1)' }}>💪</div>
+                <span className="font-medium">Hidden strengths</span>
               </div>
-              <div className="flex items-start gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full mt-1 shrink-0" style={{ background: '#FF4D6A' }} />
-                <span>The mask you project vs. reality</span>
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-sm" style={{ background: 'rgba(255,77,106,0.1)' }}>🎭</div>
+                <span className="font-medium">Your mask vs. reality</span>
               </div>
-              <div className="flex items-start gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full mt-1 shrink-0" style={{ background: '#FFD166' }} />
-                <span>A personal challenge for the week</span>
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-sm" style={{ background: 'rgba(255,209,102,0.1)' }}>🎯</div>
+                <span className="font-medium">Weekly challenge</span>
               </div>
-              <div className="flex items-start gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full mt-1 shrink-0" style={{ background: '#FF8A5C' }} />
-                <span>Compatibility map with friends</span>
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-sm" style={{ background: 'rgba(255,138,92,0.1)' }}>🤝</div>
+                <span className="font-medium">Friend compatibility</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Insight teaser — not "sample", positioned as a real result */}
+        {/* Insight teaser */}
         <div className="w-full mb-8 md:mb-10 rounded-2xl p-5 text-center"
           style={{ background: '#1A1A1A', color: '#FAF8F5' }}>
-          <div className="text-[10px] font-bold uppercase tracking-widest mb-3"
-            style={{ color: '#FF8A5C' }}>
-            What you'll discover
-          </div>
-          <div className="text-base md:text-lg font-black mb-2 leading-snug">
+          <div className="text-base md:text-lg font-black mb-1 leading-snug">
             &ldquo;Your friends see someone more{' '}
             <span style={{
               background: 'linear-gradient(135deg, #FF4D6A, #FF8A5C)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
             }}>adventurous</span>{' '}
-            than you see yourself. The gap is 3.2 points.&rdquo;
+            than you see yourself.&rdquo;
           </div>
           <div className="text-xs" style={{ color: '#666' }}>
-            Based on real personality science. Played with real friends.
+            20 minutes. Real friends. Real insights.
           </div>
         </div>
 
         {/* Footer */}
         <div className="text-center text-xs" style={{ color: '#CCC' }}>
           Built by{' '}
-          <a
-            href="https://www.linkedin.com/in/dheerajjain-gim"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-2"
-            style={{ color: '#AAA' }}
-          >
+          <a href="https://www.linkedin.com/in/dheerajjain-gim" target="_blank" rel="noopener noreferrer"
+            className="underline underline-offset-2" style={{ color: '#AAA' }}>
             Dheeraj Jain
           </a>
         </div>

@@ -69,7 +69,7 @@ function JoinForm() {
         if (res.status === 409 && data.existingPlayerId && data.roomCode) {
           const storedId = typeof window !== 'undefined' ? localStorage.getItem('gtg_player_id') : null
           if (storedId && storedId === data.existingPlayerId) {
-            localStorage.setItem(`sm-token-${data.roomCode}`, data.existingPlayerId)
+            sessionStorage.setItem(`sm-token-${data.roomCode}`, data.existingPlayerId)
             navigated = true
             router.push(`/mirror/${data.roomCode}`)
             return
@@ -103,7 +103,7 @@ function JoinForm() {
       }
 
       // Store token for mirror page
-      localStorage.setItem(`sm-token-${data.session.room_code}`, data.player.id)
+      sessionStorage.setItem(`sm-token-${data.session.room_code}`, data.player.id)
       navigated = true
       router.push(`/mirror/${data.session.room_code}`)
     } catch {

@@ -37,9 +37,9 @@ export default function SocialMirrorLogo({ size = 40, className = '' }: SocialMi
         strokeWidth="2"
       />
 
-      {/* Iris */}
-      <circle cx="22" cy="16" r="8" fill="url(#sm-eye-grad)" opacity="0.15" />
-      <circle cx="22" cy="16" r="5" fill="url(#sm-eye-grad)" opacity="0.3" />
+      {/* Iris — darker for visibility */}
+      <circle cx="22" cy="16" r="8" fill="url(#sm-eye-grad)" opacity="0.35" />
+      <circle cx="22" cy="16" r="5" fill="url(#sm-eye-grad)" opacity="0.6" />
 
       {/* Person silhouette in the pupil */}
       <circle cx="22" cy="13" r="2.5" fill="white" opacity="0.8" />

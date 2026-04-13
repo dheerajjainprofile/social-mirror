@@ -109,7 +109,7 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
       setPlayers(plist ?? [])
 
       // Check if we're already a player (localStorage token)
-      const token = localStorage.getItem(`sm-token-${code}`)
+      const token = sessionStorage.getItem(`sm-token-${code}`)
       if (token) {
         const existing = (plist ?? []).find((p) => p.id === token)
         if (existing) {
@@ -208,6 +208,17 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
   }, [session?.id])
 
   useEffect(() => { refreshRef.current = refresh }, [refresh])
+
+  // Poll players every 3s while in lobby (Supabase Realtime INSERT is unreliable)
+  useEffect(() => {
+    if (!session?.id || session.status !== 'lobby') return
+    const poll = setInterval(async () => {
+      const { data } = await supabase
+        .from('players').select('*').eq('session_id', session.id).eq('removed', false)
+      if (data) setPlayers(data)
+    }, 3000)
+    return () => clearInterval(poll)
+  }, [session?.id, session?.status])
 
   // Auto-advance SELF-RATING → GROUP-RATING:
   // When the subject submits their self-rating, the organizer's client detects it
@@ -311,7 +322,7 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
           || { id: data.existingPlayerId, name: nameInput.trim(), is_organizer: false, session_id: session.id }
         setMe(existingPlayer as Player)
         setIsOrganizer(existingPlayer.is_organizer ?? false)
-        localStorage.setItem(`sm-token-${code}`, data.existingPlayerId)
+        sessionStorage.setItem(`sm-token-${code}`, data.existingPlayerId)
         saveDisplayName(nameInput.trim())
         await refresh()
         setJoining(false)
@@ -321,7 +332,7 @@ export default function MirrorGamePage({ params }: { params: Promise<{ code: str
       if (data.player) {
         setMe(data.player)
         setIsOrganizer(data.player.is_organizer)
-        localStorage.setItem(`sm-token-${code}`, data.player.id)
+        sessionStorage.setItem(`sm-token-${code}`, data.player.id)
         saveDisplayName(nameInput.trim())
         const profileId = await ensureProfile(nameInput.trim())
         if (profileId && data.session?.id) {
